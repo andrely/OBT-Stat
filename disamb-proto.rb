@@ -33,6 +33,14 @@ class Word
   def initialize
     @tags = []
   end
+
+  def tag_by_string(str)
+    @tags.each do |t|
+      return t if str == t.clean_out_tag
+    end
+
+    return nil
+  end
 end
 
 class Tag
@@ -75,7 +83,8 @@ if __FILE__ == $0
     s.words.each do |w|
       # not ambigious
       if w.tags.count == 1
-        puts w.string + "\t" + w.tags.first.clean_out_tag
+        ob_tag = w.tags.first
+        puts w.string + "\t" + ob_tag.clean_out_tag + "\t" + ob_tag.lemma
         o.gets
       # ambigious
       else
@@ -93,11 +102,17 @@ if __FILE__ == $0
         if tags.include? hun_tag
           $stderr.puts "ambiguity hunpos tag #{hun_tag} chosen"
 
-          puts w.string + "\t" + hun_tag
+          ob_tag = w.tag_by_string(hun_tag)
+
+          raise RuntimeError if ob_tag.nil?
+
+           puts w.string + "\t" + ob_tag.clean_out_tag + "\t" + ob_tag.lemma
         else
           $stderr.puts "ambiguity ob tag #{w.tags.first.clean_out_tag} chosen"
 
-          puts w.string + "\t" + w.tags.first.clean_out_tag
+          ob_tag = w.tags.first
+
+          puts w.string + "\t" + ob_tag.clean_out_tag + "\t" + ob_tag.lemma
         end
       end
     end
