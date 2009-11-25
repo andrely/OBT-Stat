@@ -1,11 +1,16 @@
 #!/local/bin/ruby
 
 require "open3"
+require "getoptlong"
+
 require "obno_text"
+require "disambiguator"
+require "evaluator"
 
-$hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
+# $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
+$hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./disamb.hunpos.model"
 
-# stub ActiveRecor classes from tag-annotator
+# stub ActiveRecord classes from tag-annotator
 class Text
   attr_accessor :sentence_count, :sentences
 
@@ -59,62 +64,26 @@ class Tag
 end
 
 if __FILE__ == $0
-  # get input
-  text = Text.new
-  OBNOText.parse text, ARGF.read
-  
-  # run hunpos
-  i, o, e = Open3.popen3 $hunpos_command
- 
-  text.sentences.each do |s|
-    s.words.each do |w|
-      i.puts w.string
+  #instantiate inactive evaluator
+  evaluator = Evaluator.new
+
+  # parse options
+  opts = GetoptLong.new(
+          ["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT])
+
+  opts.each do |opt, arg|
+    case opt
+      when "--eval":
+        # activate evaluator
+        evaluator.evaluation_file = arg.inspect
     end
   end
-
-  i.close
 
   # o.each_line do |line|
   #   $stderr.puts line
   # end
 
   # output and merge disambigious words
-  text.sentences.each do |s|
-    s.words.each do |w|
-      # not ambigious
-      if w.tags.count == 1
-        ob_tag = w.tags.first
-        puts w.string + "\t" + ob_tag.clean_out_tag + "\t" + ob_tag.lemma
-        o.gets
-      # ambigious
-      else
-        # get and parse line from hunpos process
-        hun_line = o.gets.strip
-        hun_word, hun_tag = hun_line.split(/\s/)
-
-        # fetch tags
-        tags = w.tags.collect {|t| t.clean_out_tag}
-
-        # sanity check on input position
-        raise RuntimeError if hun_word != w.string
-
-        # us hunpos tag if found, just take the first tag otherwise
-        if tags.include? hun_tag
-          $stderr.puts "ambiguity hunpos tag #{hun_tag} chosen"
-
-          ob_tag = w.tag_by_string(hun_tag)
-
-          raise RuntimeError if ob_tag.nil?
-
-           puts w.string + "\t" + ob_tag.clean_out_tag + "\t" + ob_tag.lemma
-        else
-          $stderr.puts "ambiguity ob tag #{w.tags.first.clean_out_tag} chosen"
-
-          ob_tag = w.tags.first
-
-          puts w.string + "\t" + ob_tag.clean_out_tag + "\t" + ob_tag.lemma
-        end
-      end
-    end
-  end
+  disambiguator = Disambiguator.new(evaluator)
+  disambiguator.disambiguate
 end
