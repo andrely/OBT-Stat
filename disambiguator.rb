@@ -1,19 +1,13 @@
 class Disambiguator
-  attr_accessor :text, :hunpos_stream, :evaluator
+  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output
 
   def initialize(evaluator)
-    # @text = text
-    # @hunpos_stream = hunpos_stream
     @evaluator = evaluator
 
     @hunpos_seek_buf = nil
   end
 
-  def disambiguate
-    # get input
-    @text = Text.new
-    OBNOText.parse @text, ARGF.read
-    
+  def run_hunpos
     # run hunpos
     i, @hunpos_stream, e = Open3.popen3 $hunpos_command
     
@@ -26,17 +20,34 @@ class Disambiguator
     
     i.close
     e.close
+
+    @hunpos_output = []
+    @hunpos_stream.each_line do |line|
+      hun_word, hun_tag = line.split(/\s/)
+      @hunpos_output.push([hun_word, hun_tag])
+    end
+    
+  end
+
+  def disambiguate
+    @hun_idx = 0
+    
+    # get input
+    @text = Text.new
+    OBNOText.parse @text, ARGF.read
+    
+    run_hunpos
     
     @text.sentences.each do |s|
       s.words.each do |w|
         disambiguate_word(w)
-        
+        @hun_idx += 1
       end
     end
   end
 
   def disambiguate_word(word)
-    hun_word, hun_tag = get_hunpos_output
+    hun_word, hun_tag = @hunpos_output[@hun_idx]
 
     # sanity check on input position
     # raise RuntimeError, hun_word, word.string if hun_word != word.string
@@ -48,7 +59,7 @@ class Disambiguator
     if word.tags.count == 1
       selected_tag = word.tags.first
 
-      # ambigious
+    # ambigious
     else
       # fetch tags
       tags = word.tags.collect {|t| t.clean_out_tag}
@@ -76,48 +87,11 @@ class Disambiguator
     return ob_tags.first
   end
 
-  def get_hunpos_output
-    if not @hunpos_seek_buf.nil?
-      hun_line = @hunpos_seek_buf
-      @hunpos_seek_buf = nil
-    else
-      hun_line = @hunpos_stream.gets.strip  
-    end
-
-    # puts hun_line
-
-    return hun_line.split(/\s/)
-  end
-
   def validate_hunpos_output(word, hunpos_word)
     if hunpos_word == word.string
       return true
     end
-    
-    if word.string.match("^#{hunpos_word}")
-      puts "matched"
-
-      next_hunpos_word = peek_hunpos_word
-      # puts next_hunpos_word
-
-      if hunpos_word + " " + next_hunpos_word == word.string
-        # puts "again"
-        get_hunpos_output
-        return true
-      end
-    end
 
     return nil
-  end
-
-  def peek_hunpos_word
-    line = @hunpos_stream.gets.strip
-
-    puts "peek: " + line
-
-    raise RuntimeError if not @hunpos_seek_buf.nil?
-    @hunpos_seek_buf = line
-
-    return line.split(/\s/).first
   end
 end
