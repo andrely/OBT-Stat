@@ -1,5 +1,5 @@
 class Disambiguator
-  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output
+  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx
 
   def initialize(evaluator)
     @evaluator = evaluator
@@ -14,7 +14,8 @@ class Disambiguator
     # TODO: check what is actually passed to hunpos. Bug in OBNO paerser ???
     @text.sentences.each do |s|
       s.words.each do |w|
-        i.puts w.string
+        # TODO split opp collocations from OB, eg. "i forbifarten"
+        i.puts w.string.gsub(/\s/, "\n")
       end
     end
     
@@ -90,7 +91,18 @@ class Disambiguator
   def validate_hunpos_output(word, hunpos_word)
     if hunpos_word == word.string
       return true
+    else
+      combined_hunpos_word = hunpos_word + " " + @hunpos_output[@hun_idx + 1][0]
+
+      if combined_hunpos_word == word.string
+        @hun_idx += 1
+        return @hunpos_output[@hun_idx][1]
+      end
     end
+    
+    puts 'hw: ' + "#{@hunpos_output[@hun_idx + 1]}"
+
+    # join up collocations from OB, eg. "i forbifarten"
 
     return nil
   end
