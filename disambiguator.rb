@@ -45,6 +45,10 @@ class Disambiguator
         @hun_idx += 1
       end
     end
+
+    if @hun_idx != @hunpos_output.length - 1
+      $stderr.puts "ERROR: inconsistent number of hunpos words read, #{@hun_idx}//#{@hunpos_output.length - 1}"
+    end
   end
 
   def disambiguate_word(word)
@@ -92,6 +96,7 @@ class Disambiguator
     if hunpos_word == word.string
       return true
     else
+      # join up collocations from OB, eg. "i forbifarten"
       combined_hunpos_word = hunpos_word + " " + @hunpos_output[@hun_idx + 1][0]
 
       if combined_hunpos_word == word.string
@@ -100,10 +105,8 @@ class Disambiguator
       end
     end
     
-    puts 'hw: ' + "#{@hunpos_output[@hun_idx + 1]}"
-
-    # join up collocations from OB, eg. "i forbifarten"
-
+    # somehow there is a discrepancy between hunpos and OB output
+    $stderr.puts "ERROR: word #{word} does not match hunpos word #{hunpos_word}"
     return nil
   end
 end

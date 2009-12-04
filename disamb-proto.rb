@@ -7,8 +7,8 @@ require "obno_text"
 require "disambiguator"
 require "evaluator"
 
-# $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
-$hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./disamb.hunpos.model"
+$hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
+# $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./disamb.hunpos.model"
 
 # stub ActiveRecord classes from tag-annotator
 class Text
