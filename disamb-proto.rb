@@ -8,7 +8,9 @@ require "disambiguator"
 require "evaluator"
 
 $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
-# $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./disamb.hunpos.model"
+# $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./bm.hunpos.model"
+
+$eval_file = 'bm.held'
 
 # stub ActiveRecord classes from tag-annotator
 class Text
@@ -65,7 +67,7 @@ end
 
 if __FILE__ == $0
   #instantiate inactive evaluator
-  evaluator = Evaluator.new
+  evaluator = Evaluator.new($eval_file)
 
   # parse options
   opts = GetoptLong.new(

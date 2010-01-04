@@ -1,5 +1,5 @@
 class Disambiguator
-  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx
+  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx, :text_idx
 
   def initialize(evaluator)
     @evaluator = evaluator
@@ -32,6 +32,7 @@ class Disambiguator
 
   def disambiguate
     @hun_idx = 0
+    @text_idx = 0
     
     # get input
     @text = Text.new
@@ -43,20 +44,21 @@ class Disambiguator
       s.words.each do |w|
         disambiguate_word(w)
         @hun_idx += 1
+        @text_idx += 1
       end
     end
 
     if @hun_idx != @hunpos_output.length - 1
       $stderr.puts "ERROR: inconsistent number of hunpos words read, #{@hun_idx}//#{@hunpos_output.length - 1}"
     end
+
+    @evaluator.print_summary($stderr)
   end
 
   def disambiguate_word(word)
     hun_word, hun_tag = @hunpos_output[@hun_idx]
-
-    # sanity check on input position
-    # raise RuntimeError, hun_word, word.string if hun_word != word.string
-    raise RuntimeError, "Illegal hunpos word", hun_word + "-" + word.string if not validate_hunpos_output(word, hun_word)
+      
+    raise RuntimeError, "Invalid input" if not validate_word(word)
 
     selected_tag = nil
 
@@ -72,12 +74,14 @@ class Disambiguator
       # use hunpos tag if found, just take the first tag otherwise
       if tags.include? hun_tag
         $stderr.puts "ambiguity hunpos tag #{hun_tag} chosen"
+        @evaluator.mark_hunpos_resolved
 
         selected_tag = word.tag_by_string(hun_tag)
 
         raise RuntimeError if selected_tag.nil?
       else
         $stderr.puts "ambiguity ob tag #{word.tags.first.clean_out_tag} chosen"
+        @evaluator.mark_ob_resolved
 
         selected_tag = ob_select_tag(word.tags)
       end
@@ -91,6 +95,24 @@ class Disambiguator
     # Current heuristic is to just select the first tag
     return ob_tags.first
   end
+  
+  def validate_word(word)
+    if word.string.include? " "
+      words = word.string.split(" ")
+      
+      hunpos_words = @hunpos_output[@hun_idx...(@hun_idx + words.count)]
+      hunpos_words = hunpos_words.collect {|x| x.first}
+      raise RuntimeError "Invalid word" if words != hunpos_words
+      return false if words != hunpos_words
+      
+      @hun_idx += words.count - 1
+      return true
+    else
+      hun_word, hun_tag = @hunpos_output[@hun_idx]
+      
+      return word.string == hun_word
+    end
+  end
 
   def validate_hunpos_output(word, hunpos_word)
     if hunpos_word == word.string
@@ -99,9 +121,21 @@ class Disambiguator
       # join up collocations from OB, eg. "i forbifarten"
       combined_hunpos_word = hunpos_word + " " + @hunpos_output[@hun_idx + 1][0]
 
+      $stderr.puts combined_hunpos_word
+      
       if combined_hunpos_word == word.string
         @hun_idx += 1
         return @hunpos_output[@hun_idx][1]
+      else
+        # join up collocations from OB, eg. "i forbifarten"
+        combined_hunpos_word = combined_hunpos_word + " " + @hunpos_output[@hun_idx + 2][0]
+
+        $stderr.puts combined_hunpos_word
+        
+        if combined_hunpos_word == word.string
+          @hun_idx += 2
+          return @hunpos_output[@hun_idx][1]
+        end
       end
     end
     
