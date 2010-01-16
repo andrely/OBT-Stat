@@ -7,10 +7,10 @@ require "obno_text"
 require "disambiguator"
 require "evaluator"
 
-$hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
-# $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./bm.hunpos.model"
+# $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
+$hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./bm.hunpos.model"
 
-$eval_file = 'bm.held'
+$eval_file = 'test/evalB'
 
 # stub ActiveRecord classes from tag-annotator
 class Text
@@ -23,6 +23,16 @@ class Text
   # stub of ActiveRecord method
   def save!
     true
+  end
+  
+  # returns a flattened array of all words in the
+  # text instance
+  def words
+    sentences = @sentences.collect do |s|
+      s.words
+    end
+
+    return sentences.flatten
   end
 end
 
