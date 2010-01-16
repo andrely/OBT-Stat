@@ -156,35 +156,61 @@ class Disambiguator
   end
 
   def disambiguate_word(context)
-    # just make sure each data index is advanced properly
-    word = context.current(:input).string
-    word_length = word.split(/\s/).length
-    eval = context.current(:eval).first
-    eval_length = eval.split(/\s/).length
-    hun = context.current(:hunpos).first
+    # get current surface token and the number of words they're composed of
+    word = context.current(:input)
+    word_length = word.string.split(/\s/).length
+    eval = context.current(:eval)
+    eval_length = eval.first.split(/\s/).length
+    hun = context.current(:hunpos)
 
-    if word_length > 1
-      hun = context.current(:hunpos, word_length).collect { |x| x.first }.join(' ')
-
-      eval = context.current(:eval, word_length - eval_length + 1).collect { |x| x.first }.join(' ')
+    # if one of the current tokens consists of more than one word, correct for the
+    # difference be getting additional tokens from the other data sources and
+    # update their indices accordingly
+    if word_length > eval_length # word has more than one, and most, words 
+      hun = context.current(:hunpos, word_length)
+      eval = context.current(:eval, word_length - eval_length + 1)
 
       context.hun_idx += word_length - 1
       context.eval_idx += word_length - eval_length
 
-    elsif eval_length > 1
-      hun = context.current(:hunpos, eval_length).collect { |x| x.first }.join(' ')
-      word = context.current(:input, eval_length - word_length + 1).collect { |x| x.string }.join(' ')
+      # normalize all token sets to arrays
+      word = [word]
+
+    elsif eval_length > word_length # eval has more than one, and most words
+      hun = context.current(:hunpos, eval_length)
+      word = context.current(:input, eval_length - word_length + 1)
 
       context.hun_idx += eval_length - 1
       context.input_idx += eval_length - word_length
 
+      # normalize all token sets to arrays
+      eval = [eval]
+    elsif word_length > 1 and word_length == eval_length
+      hun = context.current(:hunpos, word_length)
+
+      context.hun_idx += word_length - 1
+
+      # normalize all token sets to arrays
+      word = [word]
+      eval = [eval]
+    else
+      # normalize all token sets to arrays
+      word = [word]
+      eval = [eval]
+      hun = [hun]
     end
     
-    if not word == eval and word == hun
+    # collect surface forms and ensure that they are the same across the
+    # different data arrays
+    word_s = word.collect { |w| w.string }.join(' ')
+    eval_s = eval.to_a.collect { |e| e.first }.join(' ')
+    hun_s = hun.collect { |h| h.first }.join(' ')
+    
+    puts "#{word_s} - #{eval_s} - #{hun_s}"
+
+    if not (word_s == eval_s and word_s == hun_s)
       raise RuntimeError, "Token data out of sync "
     end
-
-    puts "#{word} - #{eval} - #{hun}"
         
     return true
   end
