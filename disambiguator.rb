@@ -58,7 +58,8 @@ class Disambiguator
   def disambiguate_word(word)
     hun_word, hun_tag = @hunpos_output[@hun_idx]
       
-    raise RuntimeError, "Invalid input" if not validate_word(word)
+    raise RuntimeError, "Invalid hunPos input" if not validate_word(word)
+    raise RuntimeError, "Invalid eval input" if not @evaluator.validate_eval_data(word, @text_idx)
 
     selected_tag = nil
 
@@ -114,33 +115,4 @@ class Disambiguator
     end
   end
 
-  def validate_hunpos_output(word, hunpos_word)
-    if hunpos_word == word.string
-      return true
-    else
-      # join up collocations from OB, eg. "i forbifarten"
-      combined_hunpos_word = hunpos_word + " " + @hunpos_output[@hun_idx + 1][0]
-
-      $stderr.puts combined_hunpos_word
-      
-      if combined_hunpos_word == word.string
-        @hun_idx += 1
-        return @hunpos_output[@hun_idx][1]
-      else
-        # join up collocations from OB, eg. "i forbifarten"
-        combined_hunpos_word = combined_hunpos_word + " " + @hunpos_output[@hun_idx + 2][0]
-
-        $stderr.puts combined_hunpos_word
-        
-        if combined_hunpos_word == word.string
-          @hun_idx += 2
-          return @hunpos_output[@hun_idx][1]
-        end
-      end
-    end
-    
-    # somehow there is a discrepancy between hunpos and OB output
-    $stderr.puts "ERROR: word #{word} does not match hunpos word #{hunpos_word}"
-    return nil
-  end
 end

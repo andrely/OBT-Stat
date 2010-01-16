@@ -19,7 +19,7 @@ class Evaluator
     File.open(@evaluation_file) do |file|
       file.each_line do |line|
         if line.chop != ""
-          word, tag = line.split(/\s/)
+          word, tag = line.split("\t")
           data << [word, tag]
         end
       end
@@ -30,6 +30,13 @@ class Evaluator
 
   def validate_eval_data(word, index)
     eval_word = @evaluation_data[index][0]
+    
+    # some special massaging to handle discrepancies between
+    # old and new OB versions
+    
+    # training corpus has a space netween numbers and the percent sign
+    # eg. "30 %" but in present OB output this space is removed ("30%")
+    eval_word = eval_word.gsub(" %", "%")
 
     $stderr.puts "#{word.string} #{eval_word}"
 
