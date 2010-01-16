@@ -91,7 +91,7 @@ class DisambiguationContext
 end
 
 class Disambiguator
-  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx, :text_idx
+  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx, :text_idx, :input_file
 
   def initialize(evaluator)
     @evaluator = evaluator
@@ -137,7 +137,7 @@ class Disambiguator
 
     # get input
     @text = Text.new
-    OBNOText.parse @text, ARGF.read
+    OBNOText.parse @text, File.open(@input_file).read
 
     # run Hunpos
     run_hunpos
@@ -211,6 +211,9 @@ class Disambiguator
     if not (word_s == eval_s and word_s == hun_s)
       raise RuntimeError, "Token data out of sync "
     end
+
+    # now the surface form is in sync and we have all the needed token data
+    
         
     return true
   end

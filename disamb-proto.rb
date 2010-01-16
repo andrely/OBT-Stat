@@ -76,18 +76,19 @@ class Tag
 end
 
 if __FILE__ == $0
-  #instantiate inactive evaluator
-  evaluator = Evaluator.new($eval_file)
+  evaluator = nil
+  input_file = nil
 
   # parse options
-  opts = GetoptLong.new(
-          ["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT])
+  opts = GetoptLong.new(["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--input", "-i", GetoptLong::REQUIRED_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
-      when "--eval":
-        # activate evaluator
-        evaluator.evaluation_file = arg.inspect
+    when "--eval":
+        evaluator = Evaluator.new(arg.inspect.delete('"'))
+    when "--input":
+        input_file = arg.inspect.delete('"')
     end
   end
 
@@ -97,5 +98,6 @@ if __FILE__ == $0
 
   # output and merge disambigious words
   disambiguator = Disambiguator.new(evaluator)
+  disambiguator.input_file = input_file
   disambiguator.disambiguate
 end
