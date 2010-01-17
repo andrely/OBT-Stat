@@ -9,6 +9,9 @@ class Evaluator
     @ambiguity_count = 0
     @hunpos_resolved_count = 0
     @ob_resolved_count = 0
+    @collocation_unresolved_count = 0
+    @unaligned_eval_count = 0
+    @hunpos_correct_count = 0
 
     @evaluation_data = read_eval_data
   end
@@ -66,10 +69,24 @@ class Evaluator
     @ob_resolved_count += 1
   end
 
+  def mark_unresolvable_collocation
+    @collocation_unresolved_count += 1
+  end
+
+  def mark_hunpos_correct
+    @hunpos_correct_count += 1
+  end
+
+  def mark_unaligned_eval
+    @unaligned_eval_count += 1
+  end
+
   def print_summary(out)
     out.puts "Ambiguities: #{@ambiguity_count}"
-    out.puts "- Resolved by HunPos: #{@hunpos_resolved_count}"
-    out.puts "- Resolved by OB: #{@ob_resolved_count}"
+    out.puts "- Resolved by HunPos: #{@hunpos_correct_count}/#{@hunpos_resolved_count}"
+    out.puts "- Resolved with random OB tag: #{@ob_resolved_count}"
+    out.puts "Collocations: #{@collocation_unresolved_count}"
+    out.puts "Unaligned evaluation tokens: #{@unaligned_eval_count}"
   end
 end
 
