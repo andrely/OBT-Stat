@@ -56,6 +56,22 @@ class Word
 
     return nil
   end
+
+  def get_ambiguities
+    return @tags.length
+  end
+
+  def ambigious?
+    return get_ambiguities > 1
+  end
+
+  def match_clean_out_tag(tag)
+    @tags.find { |t| t.clean_out_tag == tag }
+  end
+
+  def word_count
+    string.split(/\s/).length
+  end
 end
 
 class Tag

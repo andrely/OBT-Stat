@@ -1,3 +1,18 @@
+def counts_to_indices(counts)
+  rval = []
+  index = 0
+
+  counts.each do |c|
+    c.times do |i|
+      rval << index 
+    end
+
+    index += 1
+  end
+
+  return rval
+end
+
 # Data structure for keeping all the disambiguation data, and current indices
 # into it
 #
@@ -87,6 +102,98 @@ class DisambiguationContext
       raise ArgumentError, "Illegal dataspec"
 
     end
+  end
+end
+
+class DisambiguationUnit
+  def initialize(input_analysis, eval_analysis, hunpos_analysis)
+    @input_analysis = input_analysis
+    @eval_analysis = eval_analysis
+    @hunpos_analysis = hunpos_analysis
+
+    @input_length = @input_analysis.length
+    @eval_length = @eval_analysis.length
+    @hunpos_length = @hunpos_analysis.length
+    
+    # if we're passed more than one Hunpos tokens
+    # we have a collocation in the input or eval tokens
+    @complex_disambiguation = @hunpos_length > 1
+  end
+
+  def resolve
+    if @complex_disambiguation
+      resolve_complex
+    else
+      resolve_simple
+    end
+  end
+
+  def resolve_complex
+    input_lengths = @input_analysis.collect { |i| i.string.split(/\s/).length }
+    eval_lengths = @eval_analysis.collect { |e| e.first.split(/\s/).length }
+    
+    # sanity checking
+    input_indices = counts_to_indices(input_lengths)
+    raise RuntimeError if not input_indices.length == @hunpos_length
+
+    hunpos_alignment = align_input_hunpos
+    
+    rval = []
+    
+    @input_length.times do |i|
+      input = @input_analysis[i]
+      hunpos = @hunpos_analysis[hunpos_alignment[i]]
+      
+      # if there is a hole in the input/hunpos alignment then there is a collocation
+      # in the input that cannot be disambiguated by hunpos
+      if ((i + 1) < @input_analysis.length) and
+          (hunpos_alignment[i] - hunpos_alignment[i + 1]) > 1
+        rval << [input.string, input.tags.first.clean_out_tag]
+        
+      elsif (i == @input_length - 1) and # hole at end
+          (hunpos_alignment[i] < @hunpos_length)
+        rval << [input.string, input.tags.first.clean_out_tag]
+
+      # if not resolve the input as normal
+      else
+        rval << resolve_input_hunpos(input, hunpos)
+      end
+    end
+
+    return rval
+  end
+
+  def resolve_simple
+    raise RuntimeError if @input_length > 1 or @eval_length > 1
+    
+    return [resolve_input_hunpos(@input_analysis.first, @hunpos_analysis.first)]
+  end
+
+  def resolve_input_hunpos(input, hunpos)
+    if input.ambigious?
+      if input.match_clean_out_tag(hunpos[1])
+        # hunpos match
+        return [input.string, hunpos[1]]
+      else
+        # no watch, return "random" tag
+        return [input.string, input.tags.first.clean_out_tag]
+      end
+    else
+      raise RuntimeError if input.tags.length > 1
+      return [input.string, input.tags.first.clean_out_tag]
+    end
+  end
+
+  def align_input_hunpos
+    rval = []
+    index = 0
+
+    @input_analysis.each do |input|
+      rval << index
+      index += input.word_count
+    end
+
+    return rval
   end
 end
 
@@ -206,14 +313,17 @@ class Disambiguator
     eval_s = eval.to_a.collect { |e| e.first }.join(' ')
     hun_s = hun.collect { |h| h.first }.join(' ')
     
-    puts "#{word_s} - #{eval_s} - #{hun_s}"
+    # puts "#{word_s} - #{eval_s} - #{hun_s}"
 
     if not (word_s == eval_s and word_s == hun_s)
       raise RuntimeError, "Token data out of sync "
     end
 
     # now the surface form is in sync and we have all the needed token data
-    
+    unit = DisambiguationUnit.new(word, eval, hun)
+    output = unit.resolve
+
+    output.each { |o| puts "#{o[0]}\t#{o[1]}"}
         
     return true
   end
