@@ -1,0 +1,185 @@
+"<hun>"
+	"hun" pron fem ent pers hum 3 nom 
+"<hadde>"
+	"ha" verb pret pa1 d5 a6 tr12 rl6 pa3 tr6 d6/til <aux1/perf_part> pa6 
+"<fått>"
+	"få" verb perf-part tr11 pa1 d5 d5/til rl6 pa1/til rl14 d6/til rl3/til pr7 tr20 tr14 <aux1/perf_part> pa6 <aux1/inf> 
+"<det>"
+	"det" pron nøyt ent pers 3 
+"<for>"
+	"for" prep 
+"<seg>"
+	"seg" pron akk refl 
+"<at>"
+	"at" sbu 
+"<rjukan-fossen>"
+	"rjukan-foss" subst appell mask be ent samset <*foss> 
+	"rjukan-fossen" subst appell fem ub ent samset <*sen> 
+	"rjukan-fossen" subst appell mask ub ent samset <*sen> 
+	"rjukan-fossen" subst appell mask ub fl samset <*sen> 
+"<kunne>"
+	"kunne" verb pret tr1 tr3 <aux1/infinitiv> 
+"<stikke>"
+	"stikke" verb inf tr1 pa1 d5 a6 a8 tr9 a4 a5 
+	"stikke" verb inf i1 tr11 
+"<med>"
+	"med" prep 
+"<seg>"
+	"seg" pron akk refl 
+"<strømmen>"
+	"strøm" subst appell mask be ent 
+"<ned fra>"
+	"ned fra" prep prep+prep @adv 
+"<himlinga>"
+	"himling" subst appell fem be ent 
+"<.>"
+	"$." clb <punkt> 
+
+"<i>"
+	"i" prep 
+"<det>"
+	"det" det dem nøyt ent 
+"<røde>"
+	"rød" adj be ent pos 
+"<ildskinnet>"
+	"ildskinn" subst appell nøyt be ent samset 
+"<skimtet>"
+	"skimte" verb pret tr1 tr2 
+"<han>"
+	"han" pron mask ent pers hum 3 nom 
+"<som>"
+	"som" prep 
+"<i drømme>"
+	"i drømme" adv prep+subst @adv 
+"<broder>"
+	"broder" subst appell mask ub ent 
+"<cormac>"
+	"cormac" ukjent 
+"<der>"
+	"der" sbu 
+"<han>"
+	"han" pron mask ent pers hum 3 nom 
+"<satt>"
+	"sitte" verb pret tr1 i2 pa1 pa4 pa5 a5 
+"<bøyd>"
+	"bøye" adj nøyt ub ent <perf-part> tr1 pa1 rl4 pa4 tr12 a7 pa1/til 
+"<over>"
+	"over" prep 
+"<kalveskinnet>"
+	"kalveskinn" subst appell nøyt be ent 
+"<og>"
+	"og" konj clb 
+"<strevde>"
+	"streve" verb pret i1 tr11 tr13 
+"<og>"
+	"og" konj clb 
+"<malte>"
+	"male" verb pret tr1 i1 i2 tr11 
+	"male" verb pret tr1 rl4 pr7 
+"<med>"
+	"med" prep 
+"<ørsmå>"
+	"ørliten" adj fl pos 
+"<penselstrøk>"
+	"penselstrøk" subst appell nøyt ub fl 
+"<i>"
+	"i" prep 
+"<alle>"
+	"all" det fl kvant 
+"<regnbuens>"
+	"regnbue" subst appell mask be ent gen 
+"<farger>"
+	"farge" subst appell mask ub fl 
+"<.>"
+	"$." clb <punkt> 
+
+"<han>"
+	"han" pron mask ent pers hum 3 nom 
+"<hadde>"
+	"ha" verb pret pa1 d5 a6 tr12 rl6 pa3 tr6 d6/til <aux1/perf_part> pa6 
+"<et>"
+	"en" det nøyt ent kvant 
+"<humoristisk>"
+	"humoristisk" adj nøyt ub ent pos 
+"<glimt>"
+	"glimt" subst appell nøyt ub ent 
+"<i>"
+	"i" prep 
+"<øynene>"
+	"øye" subst appell nøyt be fl 
+"<,>"
+	"$," <komma> 
+"<og>"
+	"og" konj clb 
+"<en>"
+	"en" det mask ent kvant 
+"<gang>"
+	"gang" subst appell mask ub ent 
+"<jeg>"
+	"jeg" pron ent pers hum nom 1 
+"<var>"
+	"være" verb pret a5 pr1 pr2 <aux1/perf_part> 
+"<på>"
+	"på" prep 
+"<vei>"
+	"vei" subst appell mask ub ent 
+"<inn>"
+	"inn" prep 
+"<,>"
+	"$," <komma> 
+"<han>"
+	"han" pron mask ent pers hum 3 nom 
+	"han" pron mask ent pers hum 3 akk 
+"<på>"
+	"på" prep 
+"<vei>"
+	"vei" subst appell mask ub ent 
+"<ut>"
+	"ut" prep 
+"<,>"
+	"$," clb <komma> 
+"<sa>"
+	"si" verb pret tr1 tr11 pa1 d5 tr2 d1 d4 pa3 
+"<han>"
+	"han" pron mask ent pers hum 3 nom 
+"<i forbifarten>"
+	"i forbifarten" adv prep+subst @adv 
+"<:>"
+	"$:" clb <kolon> 
+
+"<karen>"
+	"kar" subst appell mask be ent 
+	"kare" subst appell mask be ent 
+"<clausen>"
+	"clausen" subst appell fem ub ent samset <*sen> 
+	"clausen" subst appell mask ub ent samset <*sen> 
+	"clausen" subst appell mask ub fl samset <*sen> 
+"<er>"
+	"være" verb pres a5 pr1 pr2 <aux1/perf_part> 
+"<utdannet>"
+	"utdanne" verb perf-part tr1 rl4 d5 rl9 d5/til rl9/til 
+"<sykepleier>"
+	"sykepleie" subst appell fem ub fl 
+	"sykepleie" subst appell mask ub fl 
+	"sykepleier" subst appell mask ub ent 
+"<,>"
+	"$," clb <komma> 
+"<hun>"
+	"hun" pron fem ent pers hum 3 nom 
+"<har>"
+	"ha" verb pres pa1 d5 a6 tr12 rl6 pa3 tr6 d6/til <aux1/perf_part> pa6 
+"<ikke>"
+	"ikke" adv 
+"<arbeidet>"
+	"arbeide" verb perf-part i1 pr13 
+"<etter at>"
+	"etter at" sbu 
+"<de>"
+	"de" pron fl pers 3 nom 
+"<fikk>"
+	"få" verb pret tr11 pa1 d5 d5/til rl6 pa1/til rl14 d6/til rl3/til pr7 tr20 tr14 <aux1/perf_part> pa6 <aux1/inf> 
+"<barn>"
+	"barn" subst appell nøyt ub ent 
+	"barn" subst appell nøyt ub fl 
+"<.>"
+	"$." clb <punkt> 

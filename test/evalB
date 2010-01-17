@@ -1,0 +1,89 @@
+hun	pron_pers_3_ent_fem_hum_nom
+hadde	verb_pret_<aux1/perf_part>
+fått	verb_perf-part_<aux1/inf>_<aux1/perf_part>
+det	pron_pers_3_ent_nøyt
+for	prep
+seg	pron_refl_ent_akk
+at	sbu
+rjukan-fossen	subst_mask_appell_ent_be_samset_<*>
+kunne	verb_pret_<aux1/infinitiv>
+stikke	verb_inf	verb_inf
+med	prep
+seg	pron_refl_ent_akk
+strømmen	subst_mask_appell_ent_be
+ned fra	prep+prep_prep_@adv
+himlinga	subst_fem_appell_ent_be
+.	clb_<PUNKT>
+
+i	prep
+det	det_dem_nøyt_ent
+røde	adj_pos_be_ent
+ildskinnet	subst_nøyt_appell_ent_be_samset
+skimtet	verb_pret
+han	pron_pers_3_ent_mask_hum_nom
+som	prep
+i drømme	prep+subst_adv_@adv
+broder	subst_mask_appell_ent_ub
+cormac	subst_prop_<*>
+der	sbu
+han	pron_pers_3_ent_mask_hum_nom
+satt	verb_pret
+bøyd	adj_<perf-part>_nøyt_ub_ent
+over	prep
+kalveskinnet	subst_nøyt_appell_ent_be
+og	clb_konj
+strevde	verb_pret
+og	clb_konj
+malte	verb_pret	verb_pret
+med	prep
+ørsmå	adj_pos_fl
+penselstrøk	subst_nøyt_appell_fl_ub
+i	prep
+alle	det_kvant_fl
+regnbuens	subst_mask_appell_ent_be_gen
+farger	subst_mask_appell_fl_ub
+.	clb_<PUNKT>
+
+han	pron_pers_3_ent_mask_hum_nom
+hadde	verb_pret_<aux1/perf_part>
+et	det_kvant_nøyt_ent
+humoristisk	adj_pos_nøyt_ub_ent
+glimt	subst_nøyt_appell_ent_ub
+i	prep
+øynene	subst_nøyt_appell_fl_be
+,	<komma>
+og	konj
+en	det_kvant_mask_ent
+gang	subst_mask_appell_ent_ub
+jeg	pron_pers_1_ent_hum_nom
+var	verb_pret_<aux1/perf_part>
+på	prep
+vei	subst_mask_appell_ent_ub
+inn	prep
+,	<komma>
+han	pron_pers_3_ent_mask_hum_nom
+på	prep
+vei	subst_mask_appell_ent_ub
+ut	prep
+,	clb_<komma>
+sa	verb_pret
+han	pron_pers_3_ent_mask_hum_nom
+i	prep
+forbifarten	subst_appell_ubøy
+:	clb_<kolon>
+
+karen	subst_fem_prop_<*>
+clausen	subst_prop_<*>
+er	verb_pres_<aux1/perf_part>
+utdannet	verb_perf-part
+sykepleier	subst_mask_appell_ent_ub
+,	clb_<komma>
+hun	pron_pers_3_ent_fem_hum_nom
+har	verb_pres_<aux1/perf_part>
+ikke	adv
+arbeidet	verb_perf-part
+etter at	sbu
+de	pron_pers_3_fl_nom
+fikk	verb_pret_<aux1/inf>_<aux1/perf_part>
+barn	subst_nøyt_appell_ent_ub	subst_nøyt_appell_fl_ub
+.	clb_<PUNKT>

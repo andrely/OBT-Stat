@@ -10,8 +10,6 @@ require "evaluator"
 # $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag ./bm.hunpos.model"
 
-$eval_file = 'test/evalB'
-
 # stub ActiveRecord classes from tag-annotator
 class Text
   attr_accessor :sentence_count, :sentences
@@ -75,8 +73,18 @@ class Tag
   end
 end
 
+def run_disambiguator(inputfile, evalfile)
+  evaluator = Evaluator.new(evalfile)
+
+  disambiguator = Disambiguator.new(evaluator)
+
+  disambiguator.input_file = inputfile
+
+  disambiguator.disambiguate
+end
+
 if __FILE__ == $0
-  evaluator = nil
+  eval_file = nil
   input_file = nil
 
   # parse options
@@ -86,18 +94,11 @@ if __FILE__ == $0
   opts.each do |opt, arg|
     case opt
     when "--eval":
-        evaluator = Evaluator.new(arg.inspect.delete('"'))
+        eval_file = arg.inspect.delete('"')
     when "--input":
         input_file = arg.inspect.delete('"')
     end
   end
 
-  # o.each_line do |line|
-  #   $stderr.puts line
-  # end
-
-  # output and merge disambigious words
-  disambiguator = Disambiguator.new(evaluator)
-  disambiguator.input_file = input_file
-  disambiguator.disambiguate
+  run_disambiguator(input_file, eval_file)
 end

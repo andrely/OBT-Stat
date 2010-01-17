@@ -1,0 +1,33 @@
+vi	pron_pers_1_fl_hum_nom
+opplever	verb_pres
+også	adv
+at	sbu
+tolkningen	subst_mask_appell_ent_be
+av	prep
+reglene	subst_mask_appell_fl_be	subst_fem_appell_fl_be	subst_mask_appell_fl_be
+avhenger	verb_pres
+av	prep
+den	det_dem_mask_ent
+stortingsrepresentanten	subst_mask_appell_ent_be
+som	sbu
+tar	verb_pres
+opp	prep
+en	det_kvant_mask_ent
+sak	subst_mask_appell_ent_ub
+,	clb_<komma>
+sier	verb_pres
+jørgensen	subst_prop_<*>
+.	clb_<PUNKT>
+
+men	clb_konj
+nå	adv
+ser	verb_pres
+det	pron_pers_3_ent_nøyt
+ut	prep
+til	prep
+å	inf-merke
+svikte	verb_inf
+,	clb_<komma>
+mener	verb_pres
+jørgensen	subst_prop_<*>
+.	clb_<PUNKT>

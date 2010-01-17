@@ -1,0 +1,74 @@
+"<vi>"
+	"vi" pron fl pers hum nom 1 
+"<opplever>"
+	"oppleve" verb pres tr6 tr8 tr18 tr19 
+"<også>"
+	"også" adv 
+"<at>"
+	"at" sbu 
+"<tolkningen>"
+	"tolkning" subst appell mask be ent 
+"<av>"
+	"AV" adj fork 
+	"av" prep 
+"<reglene>"
+	"regel" subst appell mask be fl 
+	"regle" subst appell fem be fl 
+	"regle" subst appell mask be fl 
+"<avhenger>"
+	"avhenge" verb pres tr12 
+"<av>"
+	"av" prep 
+"<den>"
+	"den" det dem mask ent 
+"<stortingsrepresentanten>"
+	"stortingsrepresentant" subst appell mask be ent 
+"<som>"
+	"som" sbu 
+"<tar>"
+	"ta" verb pres tr1 i1 tr11 pa1 d5 rl9 a3 pa4 pa2 pa5 tr11/til rl6 tr9 a11 a4 rl14 rl15 rl13 pa6 pa7 
+"<opp>"
+	"opp" prep 
+"<en>"
+	"en" det mask ent kvant 
+"<sak>"
+	"sak" subst appell mask ub ent 
+"<,>"
+	"$," clb <komma> 
+"<sier>"
+	"si" verb pres tr1 tr11 pa1 d5 tr2 d1 d4 pa3 
+"<jørgensen>"
+	"jørgens" subst appell mask be ent samset 
+	"jørgensen" subst appell fem ub ent samset <*sen> 
+	"jørgensen" subst appell mask ub ent samset <*sen> 
+	"jørgensen" subst appell mask ub fl samset <*sen> 
+"<.>"
+	"$." clb <punkt> 
+
+"<men>"
+	"men" konj clb 
+"<nå>"
+	"nå" adv 
+"<ser>"
+	"se" verb pres tr1 tr11 tr2 pa2 pa5 tr11/til tr3 tr4 
+"<det>"
+	"det" pron nøyt ent pers 3 
+"<ut>"
+	"ut" prep 
+"<til>"
+	"til" prep 
+"<å>"
+	"å" inf-merke 
+"<svikte>"
+	"svikte" verb inf tr1 i1 i2 
+"<,>"
+	"$," clb <komma> 
+"<mener>"
+	"mene" verb pres tr1 tr2 
+"<jørgensen>"
+	"jørgens" subst appell mask be ent samset 
+	"jørgensen" subst appell fem ub ent samset <*sen> 
+	"jørgensen" subst appell mask ub ent samset <*sen> 
+	"jørgensen" subst appell mask ub fl samset <*sen> 
+"<.>"
+	"$." clb <punkt> 
