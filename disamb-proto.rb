@@ -12,6 +12,8 @@ require "evaluator"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
 $hunpos_default_model = "./bm.hunpos.model"
 
+$verbose_output = nil
+
 def counts_to_indices(counts)
   rval = []
   index = 0
@@ -27,8 +29,9 @@ def counts_to_indices(counts)
   return rval
 end
 
-def info_message(msg)
-  $stderr.puts msg
+def info_message(msg, newline = true)
+  $stderr.print msg if $verbose_output
+  $stderr.puts if newline
 end
 
 def run_disambiguator(inputfile, evalfile)
@@ -48,7 +51,8 @@ if __FILE__ == $0
   # parse options
   opts = GetoptLong.new(["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT],
                         ["--input", "-i", GetoptLong::REQUIRED_ARGUMENT],
-                        ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT])
+                        ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--verbose", "-v", GetoptLong::REQUIRED_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
@@ -58,6 +62,8 @@ if __FILE__ == $0
         input_file = arg.inspect.delete('"')
     when "--model":
         $hunpos_default_model = arg.inspect.delete('"')
+    when "--verbose":
+        $verbose_output = true
     end
   end
 

@@ -12,7 +12,8 @@ class Disambiguator
   end
 
   def run_hunpos
-    $stderr.puts $hunpos_command + " " + $hunpos_default_model
+    info_message($hunpos_command + " " + $hunpos_default_model)
+    
     @hunpos_output = []
     
     File.open('temp', 'w') do |f|
@@ -23,14 +24,14 @@ class Disambiguator
         end
 
         f.puts
-        $stderr.print "."
+        info_message ".", nil
       end
     end
 
     io = IO.popen("#{$hunpos_command} #{$hunpos_default_model} < temp", 'r+')
     
     io.each_line do |line|
-      $stderr.print "-"
+      info_message "-", nil
         
       line = line.chomp
 
@@ -43,8 +44,8 @@ class Disambiguator
 
     io.close
  
-    $stderr.puts
-    $stderr.puts "Finished running HunPos"
+    info_message "" # just a finishing newline
+    info_message "Finished running HunPos"
   end
 
   # This function drives the disambiguation loop over
@@ -93,7 +94,7 @@ class Disambiguator
         context.eval_idx += 1
       else
         # if not throw error
-        $stderr.puts "#{word_s} : #{eval_s} : #{hun_s}"
+        info_message "#{word_s} : #{eval_s} : #{hun_s}"
         raise RuntimeError
       end
     end
