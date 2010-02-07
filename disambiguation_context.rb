@@ -13,7 +13,7 @@
 # but it is the responsibility of disambiguate_word() to make sure the counters
 # account for discrepancies between the data arrays.
 class DisambiguationContext
-  attr_accessor :input, :hunpos, :eval, :input_idx, :hun_idx, :eval_idx
+  attr_accessor :input, :hunpos, :eval, :input_idx, :hun_idx, :eval_idx, :eval_active
   
   def initialize
     @input_idx = 0
@@ -31,13 +31,22 @@ class DisambiguationContext
   # returns true if at the end of all data arrays
   def at_end?
     # do we point beyond the end of any of our data arrays ?
-    if (@input_idx == @input.length) or (@hun_idx == @hunpos.length) or (@eval_idx == @eval.length)
+    if (@input_idx == @input.length) or (@hun_idx == @hunpos.length) or (@eval_active and (@eval_idx == @eval.length))
 
       # if we're not at the end of all of them we've gone out of sync somewhere
-      if not ((@input_idx == @input.length) and (@hun_idx == @hunpos.length) and (@eval_idx == @eval.length))
-        raise "End of data out of sync #{@input.length - @input_idx}, #{@hunpos.length - @hun_idx}, #{@eval.length - @eval_idx}"
-       else
-        return true
+      if eval_active
+        if not ((@input_idx == @input.length) and (@hun_idx == @hunpos.length) and (@eval_idx == @eval.length))
+          raise "End of data out of sync #{@input.length - @input_idx}, #{@hunpos.length - @hun_idx}, #{@eval.length - @eval_idx}"
+        else
+          return true
+        end
+      else
+        if not ((@input_idx == @input.length) and (@hun_idx == @hunpos.length))
+          raise "End of data out of sync #{@input.length - @input_idx}, #{@hunpos.length - @hun_idx}"
+        else
+          return true
+      end
+
       end
     end
 
@@ -79,7 +88,11 @@ class DisambiguationContext
       when :input
         return @input[@input_idx]
       when :eval
-        return @eval[@eval_idx]
+        if @eval_active
+          return @eval[@eval_idx]
+        else
+          return nil
+        end
       when :hunpos
         return @hunpos[@hun_idx]
       end

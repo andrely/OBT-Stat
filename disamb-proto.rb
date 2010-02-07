@@ -8,6 +8,8 @@ require "obno_text"
 require "disambiguator"
 require "evaluator"
 
+$eval_file = nil
+
 # $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
 $hunpos_default_model = "./bm.hunpos.model"
@@ -52,12 +54,12 @@ if __FILE__ == $0
   opts = GetoptLong.new(["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT],
                         ["--input", "-i", GetoptLong::REQUIRED_ARGUMENT],
                         ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT],
-                        ["--verbose", "-v", GetoptLong::REQUIRED_ARGUMENT])
+                        ["--verbose", "-v", GetoptLong::NO_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
     when "--eval":
-        eval_file = arg.inspect.delete('"')
+        $eval_file = arg.inspect.delete('"')
     when "--input":
         input_file = arg.inspect.delete('"')
     when "--model":
@@ -67,5 +69,5 @@ if __FILE__ == $0
     end
   end
 
-  run_disambiguator(input_file, eval_file)
+  run_disambiguator(input_file, $eval_file)
 end

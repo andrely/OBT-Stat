@@ -1,8 +1,8 @@
 class Evaluator
-  attr_reader :evaluation_file
+  attr_reader :evaluation_file, :active
   attr_accessor :evaluation_data
 
-  def initialize(evaluation_file)
+  def initialize(evaluation_file=nil)
     @evaluation_file = evaluation_file
     @active = nil
 
@@ -12,8 +12,11 @@ class Evaluator
     @collocation_unresolved_count = 0
     @unaligned_eval_count = 0
     @hunpos_correct_count = 0
-
-    @evaluation_data = read_eval_data
+    
+    if evaluation_file
+      @evaluation_data = read_eval_data
+      @active = true
+    end
   end
   
   def read_eval_data

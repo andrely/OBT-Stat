@@ -64,6 +64,7 @@ class Disambiguator
     context.input = @text.words
     context.hunpos = @hunpos_output
     context.eval = @evaluator.evaluation_data
+    context.eval_active = @evaluator.active
     
     while not context.at_end?
       disambiguate_word(context)
@@ -80,7 +81,12 @@ class Disambiguator
 
     word_s = word.normalized_string
     hun_s = hun.first
-    eval_s = eval.first
+
+    if eval
+      eval_s = eval.first
+    else
+      eval_s = word_s
+    end
 
     if not (word_s == eval_s and word_s == hun_s)
       # try to append next eval token
