@@ -92,8 +92,10 @@ class DisambiguationUnit
 
         candidates = input.tags.find_all { |t| t.clean_out_tag == hunpos[1] }
         lemmas = candidates.collect { |t| t.lemma }
+
+        lemma = $lemma_model.disambiguate_lemma(input.string, lemmas)
         
-        return [input.string, lemmas.first, hunpos[1]]
+        return [input.string, lemma, hunpos[1]]
       else
         # no watch, return "random" tag
         @evaluator.mark_ob_resolved

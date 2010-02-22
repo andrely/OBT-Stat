@@ -7,6 +7,7 @@ require "obno_stubs"
 require "obno_text"
 require "disambiguator"
 require "evaluator"
+require "lemma_model"
 
 $eval_file = nil
 $log_file = "log"
@@ -25,57 +26,6 @@ def obno_read(file)
   OBNOText.parse text, File.open(file).read
 
   return text
-end
-
-def lemma_counts(text)
-  lemma_counts = {}
-  no_correct = 0
-  
-  text.sentences.each do |s|
-    s.words.each do |w|
-      tag = w.get_correct_tags
-      if tag.count != 1
-        no_correct += 1
-        next
-      end
-
-      tag = tag.first
-      lemma = tag.lemma
-
-      word = w.string
-
-      data = lemma_counts[word]
-
-      if data.nil?
-        lemma_counts[word] = { lemma => 1 }
-      elsif data[lemma].nil?
-        data[lemma] = 1
-      else
-        data[lemma] += 1
-      end
-    end
-  end
-
-  return [lemma_counts, no_correct]
-end
-
-def create_lemma_model(text)
-  model = {}
-  lc = lemma_counts(text)
-
-  lc.first.each do |k, v|
-    word = k
-    total = v.values.inject { |sum, n| sum + n }
-    lemma_probs = []
-
-    v.each do |k, v|
-      lemma_probs << [k, v / total.to_f]
-    end
-
-    model[word] = lemma_probs
-  end
-
-  return model
 end
 
 def counts_to_indices(counts)

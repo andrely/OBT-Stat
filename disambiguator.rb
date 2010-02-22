@@ -62,7 +62,7 @@ class Disambiguator
     run_hunpos
 
     # build lemma model
-    $lemma_model = create_lemma_model(text)
+    $lemma_model = LemmaModel.new
     
     # store all data in context
     context.input = @text.words
