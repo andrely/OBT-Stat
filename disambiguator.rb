@@ -3,7 +3,8 @@ require 'disambiguation_context'
 require 'disambiguation_unit'
 
 class Disambiguator
-  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx, :text_idx, :input_file
+  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx,
+    :text_idx, :input_file, :lemma_model
 
   def initialize(evaluator)
     @evaluator = evaluator
@@ -59,6 +60,9 @@ class Disambiguator
 
     # run Hunpos
     run_hunpos
+
+    # build lemma model
+    $lemma_model = create_lemma_model(text)
     
     # store all data in context
     context.input = @text.words
@@ -105,10 +109,10 @@ class Disambiguator
       end
     end
 
-    unit = DisambiguationUnit.new([word], [eval], [hun], @evaluator)
+    unit = DisambiguationUnit.new([word], [eval], [hun], @evaluator, context.input_idx)
     output = unit.resolve
 
-    output.each { |o| puts "#{o[0]}\t#{o[1]}"}
+    output.each { |o| puts "#{o[0]}\t#{o[1]}\t#{o[2]}"}
         
     return true
   end

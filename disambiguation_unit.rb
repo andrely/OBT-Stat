@@ -1,5 +1,5 @@
 class DisambiguationUnit
-  def initialize(input_analysis, eval_analysis, hunpos_analysis, evaluator)
+  def initialize(input_analysis, eval_analysis, hunpos_analysis, evaluator, pos)
     @input_analysis = input_analysis
     @eval_analysis = eval_analysis
     @hunpos_analysis = hunpos_analysis
@@ -9,6 +9,8 @@ class DisambiguationUnit
     @hunpos_length = @hunpos_analysis.length
 
     @evaluator = evaluator
+
+    @pos = pos
     
     # if we're passed more than one Hunpos tokens
     # we have a collocation in the input or eval tokens
@@ -24,6 +26,11 @@ class DisambiguationUnit
   end
 
   def resolve_complex
+    # complex resolution probably not needed
+    # disabling this code
+
+    raise RuntimeError
+    
     input_lengths = @input_analysis.collect { |i| i.string.split(/\s/).length }
     eval_lengths = @eval_analysis.collect { |e| e.first.split(/\s/).length }
     
@@ -67,20 +74,37 @@ class DisambiguationUnit
   end
 
   def resolve_input_hunpos(input, hunpos, eval)
+    # TODO select and output lemmas
     if input.ambigious?
+      $log_fd.puts "Amibigious word \"#{input.string}\" at #{@pos}}"
+      input.tags.each do |t|
+        $log_fd.puts "OB: #{t.lemma} #{t.clean_out_tag}"
+      end
+      $log_fd.puts "HUNPOS: #{hunpos[1]} (#{hunpos[0]})"
+      
       if input.match_clean_out_tag(hunpos[1])
         # hunpos match
         @evaluator.mark_hunpos_resolved
+        
+        $log_fd.puts "SELECTED HUNPOS #{eval[1] if eval} #{hunpos[1]}"
+        
         @evaluator.mark_hunpos_correct if hunpos[1] == eval[1] if eval # eval is nil if unaligned
-        return [input.string, hunpos[1]]
+
+        candidates = input.tags.find_all { |t| t.clean_out_tag == hunpos[1] }
+        lemmas = candidates.collect { |t| t.lemma }
+        
+        return [input.string, lemmas.first, hunpos[1]]
       else
         # no watch, return "random" tag
         @evaluator.mark_ob_resolved
-        return [input.string, input.tags.first.clean_out_tag]
+
+        $log_fd.puts "SELECTED OB #{input.tags.first.lemma} #{input.tags.first.clean_out_tag}"
+        
+        return [input.string, input.tags.first.lemma, input.tags.first.clean_out_tag]
       end
     else
       raise RuntimeError if input.tags.length > 1
-      return [input.string, input.tags.first.clean_out_tag]
+      return [input.string, input.tags.first.lemma, input.tags.first.clean_out_tag]
     end
   end
 
