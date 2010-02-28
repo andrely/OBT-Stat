@@ -26,7 +26,7 @@ class Evaluator
       file.each_line do |line|
         if line.chop != ""
           word, tag = line.split("\t")
-          data << [word, tag]
+          data << [word.strip, tag.strip]
         end
       end
     end
