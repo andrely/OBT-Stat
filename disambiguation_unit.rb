@@ -74,7 +74,6 @@ class DisambiguationUnit
   end
 
   def resolve_input_hunpos(input, hunpos, eval)
-    # TODO select and output lemmas
     if input.ambigious?
       $log_fd.puts "Amibigious word \"#{input.string}\" at #{@pos}}"
       input.tags.each do |t|
@@ -87,22 +86,40 @@ class DisambiguationUnit
         @evaluator.mark_hunpos_resolved
         
         $log_fd.puts "SELECTED HUNPOS #{eval[1] if eval} #{hunpos[1]}"
-        
+
         @evaluator.mark_hunpos_correct if hunpos[1] == eval[1] if eval # eval is nil if unaligned
 
         candidates = input.tags.find_all { |t| t.clean_out_tag == hunpos[1] }
         lemmas = candidates.collect { |t| t.lemma }
 
         lemma = $lemma_model.disambiguate_lemma(input.string, lemmas)
+
+        @evaluator.mark_lemma_correct if lemma == eval[2]
         
         return [input.string, lemma, hunpos[1]]
       else
-        # no watch, return "random" tag
-        @evaluator.mark_ob_resolved
+        # no match, choose the word with the best lemma
 
-        $log_fd.puts "SELECTED OB #{input.tags.first.lemma} #{input.tags.first.clean_out_tag}"
+        candidates = input.tags.find_all { |t| t.clean_out_tag == hunpos[1] }
+        lemmas = candidates.collect { |t| t.lemma }
+
+        lemma = $lemma_model.disambiguate_lemma(input.string, lemmas)
+
+        tags = input.tags.find_all { |t| t.lemma == lemma }
+
+        # take the first tag with the correct lemma
+        tag = tags.first
+        # or the first of all OB tags if none with the chosen lemma
+        # is available
+        tag = input.tags.first if tag.nil?
+
+        @evaluator.mark_ob_resolved
+        # do not count correct lemmas that was not available from OB
+        @evaluator.mark_lemma_correct if lemma == eval[2] and not tags.nil?
         
-        return [input.string, input.tags.first.lemma, input.tags.first.clean_out_tag]
+        $log_fd.puts "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
+        
+        return [input.string, tag.lemma, tag.clean_out_tag]
       end
     else
       raise RuntimeError if input.tags.length > 1

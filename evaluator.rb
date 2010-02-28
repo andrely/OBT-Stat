@@ -12,6 +12,7 @@ class Evaluator
     @collocation_unresolved_count = 0
     @unaligned_eval_count = 0
     @hunpos_correct_count = 0
+    @lemma_correct_count = 0
     
     if evaluation_file
       @evaluation_data = read_eval_data
@@ -25,8 +26,9 @@ class Evaluator
     File.open(@evaluation_file) do |file|
       file.each_line do |line|
         if line.chop != ""
-          word, tag = line.split("\t")
-          data << [word.strip, tag.strip]
+          word, tag, lemma  = line.split("\t")
+          raise RuntimeError if (word == "") or (tag == "") or (lemma == "")
+          data << [word.strip, tag.strip, lemma.strip]
         end
       end
     end
@@ -80,6 +82,10 @@ class Evaluator
     @hunpos_correct_count += 1
   end
 
+  def mark_lemma_correct
+    @lemma_correct_count += 1
+  end
+
   def mark_unaligned_eval
     @unaligned_eval_count += 1
   end
@@ -88,6 +94,7 @@ class Evaluator
     out.puts "Ambiguities: #{@ambiguity_count}"
     out.puts "- Resolved by HunPos: #{@hunpos_correct_count}/#{@hunpos_resolved_count}"
     out.puts "- Resolved with random OB tag: #{@ob_resolved_count}"
+    out.puts "Correctly resolved lemmas: #{@lemma_correct_count}"
     out.puts "Collocations: #{@collocation_unresolved_count}"
     out.puts "Unaligned evaluation tokens: #{@unaligned_eval_count}"
   end
