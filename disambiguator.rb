@@ -8,8 +8,6 @@ class Disambiguator
 
   def initialize(evaluator)
     @evaluator = evaluator
-
-    @hunpos_seek_buf = nil
   end
 
   def run_hunpos
@@ -20,21 +18,17 @@ class Disambiguator
     File.open('temp', 'w') do |f|
       @text.sentences.each do |s|
         s.words.each do |w|
-          # f.puts Iconv.conv("ISO-8859-1", "UTF-8", w.normalized_string)
-          f.puts w.normalized_string
+           f.puts w.normalized_string
         end
 
         f.puts
-        info_message ".", nil
-      end
+       end
     end
 
     io = IO.popen("#{$hunpos_command} #{$hunpos_default_model} < temp", 'r+')
     
     io.each_line do |line|
-      info_message "-", nil
-        
-      line = line.chomp
+       line = line.chomp
 
       # skip empty lines separating sentences
       if not line == ""
@@ -44,9 +38,6 @@ class Disambiguator
     end
 
     io.close
- 
-    info_message "" # just a finishing newline
-    info_message "Finished running HunPos"
   end
 
   # This function drives the disambiguation loop over
@@ -59,10 +50,14 @@ class Disambiguator
     OBNOText.parse @text, File.open(@input_file).read
 
     # run Hunpos
+    info_message "Start running HunPos"
     run_hunpos
+    info_message "Finished running HunPos"
 
     # build lemma model
+    info_message "Building lemma model"
     $lemma_model = LemmaModel.new
+    info_message "Finished building lemma model"
     
     # store all data in context
     context.input = @text.words
@@ -109,10 +104,10 @@ class Disambiguator
       end
     end
 
-    unit = DisambiguationUnit.new([word], [eval], [hun], @evaluator, context.input_idx)
+    unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context.input_idx)
     output = unit.resolve
 
-    output.each { |o| puts "#{o[0]}\t#{o[1]}\t#{o[2]}"}
+    puts "#{output[0]}\t#{output[1]}\t#{output[2]}"
         
     return true
   end

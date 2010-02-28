@@ -8,18 +8,21 @@ require "obno_text"
 require "disambiguator"
 require "evaluator"
 require "lemma_model"
+require "trace_logger"
 
-$eval_file = nil
-$log_file = "log"
-$log_fd = nil
-# $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag /hf/foni/home/andrely/ob-disambiguation-prototype/disamb.hunpos.model"
+# Hunpos command and default model file
+# $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
-$hunpos_default_model = "./bm.hunpos.model"
+$hunpos_default_model = "./hunpos.model"
 
+# Globally available instanes of the lemma model and trace logger
+$tracer = nil
 $lemma_model = nil
 
+# set to true for progress info and evaluation output
 $verbose_output = nil
 
+# helper function for loading cor files in the irb
 def obno_read(file)
   text = Text.new
 
@@ -28,26 +31,14 @@ def obno_read(file)
   return text
 end
 
-def counts_to_indices(counts)
-  rval = []
-  index = 0
-
-  counts.each do |c|
-    c.times do |i|
-      rval << index 
-    end
-
-    index += 1
-  end
-
-  return rval
-end
-
+# prints messages to $stderr if the verbose switch is set
 def info_message(msg, newline = true)
   $stderr.print msg if $verbose_output
   $stderr.puts if newline
 end
 
+# sets up the evaluator and disambiguator, then runs the
+# disambiguator
 def run_disambiguator(inputfile, evalfile)
   evaluator = Evaluator.new(evalfile)
 
@@ -61,6 +52,7 @@ end
 if __FILE__ == $0
   eval_file = nil
   input_file = nil
+  trace_file = nil
 
   # parse options
   opts = GetoptLong.new(["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT],
@@ -72,7 +64,7 @@ if __FILE__ == $0
   opts.each do |opt, arg|
     case opt
     when "--eval":
-        $eval_file = arg.inspect.delete('"')
+        eval_file = arg.inspect.delete('"')
     when "--input":
         input_file = arg.inspect.delete('"')
     when "--model":
@@ -80,13 +72,20 @@ if __FILE__ == $0
     when "--verbose":
         $verbose_output = true
     when "--log":
-        $log_file = arg.inspect.delete('"')
+        trace_file = arg.inspect.delete('"')
     end
   end
-
-  $log_fd = File.open($log_file, 'w')
-
-  run_disambiguator(input_file, $eval_file)
-
-  $log_fd.close
+  
+  # set up tracer
+  if trace_file
+    $tracer = TraceLogger.new(trace_file)
+  else
+    $tracer = TraceLogger.new(nil, false)
+  end
+  
+  # do the disambiguation
+  run_disambiguator(input_file, eval_file)
+  
+  # stop the tracer
+  $tracer.shutdown
 end

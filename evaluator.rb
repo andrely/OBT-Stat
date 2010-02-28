@@ -91,12 +91,12 @@ class Evaluator
   end
 
   def print_summary(out)
-    out.puts "Ambiguities: #{@ambiguity_count}"
-    out.puts "- Resolved by HunPos: #{@hunpos_correct_count}/#{@hunpos_resolved_count}"
-    out.puts "- Resolved with random OB tag: #{@ob_resolved_count}"
-    out.puts "Correctly resolved lemmas: #{@lemma_correct_count}"
-    out.puts "Collocations: #{@collocation_unresolved_count}"
-    out.puts "Unaligned evaluation tokens: #{@unaligned_eval_count}"
+    info_message "Ambiguities: #{@ambiguity_count}"
+    info_message "- Resolved by HunPos: #{@hunpos_correct_count}/#{@hunpos_resolved_count}"
+    info_message "- Resolved with random OB tag: #{@ob_resolved_count}"
+    info_message "Correctly resolved lemmas: #{@lemma_correct_count}"
+    info_message "Collocations: #{@collocation_unresolved_count}"
+    info_message "Unaligned evaluation tokens: #{@unaligned_eval_count}"
   end
 end
 

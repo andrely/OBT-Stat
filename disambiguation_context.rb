@@ -98,7 +98,6 @@ class DisambiguationContext
       end
 
       raise ArgumentError, "Illegal dataspec"
-
     end
   end
 end
