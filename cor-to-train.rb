@@ -14,9 +14,13 @@ if __FILE__ == $0
       raise RuntimeError if w.correct_count > 1
 
       if w.correct_count == 0
-        puts "#{w.normalized_string}\tukjent"
+        puts "#{w.normalized_string}\tukjent\tukjent"
       else
-        puts "#{w.normalized_string}\t#{w.get_correct_tags.first.clean_out_tag}"
+        # careful, throw error on words with multiple correct tags
+        raise RuntimeError if w.correct_count > 1
+        
+        tag = w.get_correct_tags.first
+        puts "#{w.normalized_string}\t#{tag.clean_out_tag}\t#{tag.lemma}"
       end
     end
 
