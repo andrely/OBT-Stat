@@ -99,14 +99,3 @@ class Evaluator
     info_message "Unaligned evaluation tokens: #{@unaligned_eval_count}"
   end
 end
-
-class DisambiguationResult
-  def initialize(index, word, tag, source)
-    @index = index
-    @word = word
-    @tag = tag
-    @source = source # :hunpos or :heuristic
-  end
-
-  
-end
