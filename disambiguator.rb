@@ -47,7 +47,11 @@ class Disambiguator
 
     # get input
     @text = Text.new
-    OBNOText.parse @text, File.open(@input_file).read
+    if @input_file.nil?
+      OBNOText.parse @text, $stdin.read
+    else
+      OBNOText.parse @text, File.open(@input_file).read
+    end
 
     # run Hunpos
     info_message "Start running HunPos"
