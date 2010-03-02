@@ -25,14 +25,19 @@ class DisambiguationUnit
         
         $tracer.message "SELECTED HUNPOS #{@eval[1] if @eval} #{@hunpos[1]}"
 
-        @evaluator.mark_hunpos_correct if @hunpos[1] == @eval[1] if @eval # eval is nil if unaligned
+        # TODO better checking for evaluation
+        if @eval # eval is nil if unaligned
+          @evaluator.mark_hunpos_correct if @hunpos[1] == @eval[1]
+        end
 
         candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
         lemmas = candidates.collect { |t| t.lemma }
 
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
 
-        @evaluator.mark_lemma_correct if lemma == @eval[2]
+        if @eval
+          @evaluator.mark_lemma_correct if lemma == @eval[2]
+        end
         
         return [@input.string, lemma, @hunpos[1]]
       else
@@ -53,8 +58,10 @@ class DisambiguationUnit
 
         @evaluator.mark_ob_resolved
         # do not count correct lemmas that was not available from OB
-        @evaluator.mark_lemma_correct if lemma == @eval[2] and not tags.nil?
-        
+        if @eval
+          @evaluator.mark_lemma_correct if lemma == @eval[2] and not tags.nil?
+        end
+                
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
         
         return [@input.string, tag.lemma, tag.clean_out_tag]
