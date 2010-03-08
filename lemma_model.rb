@@ -1,5 +1,5 @@
 class LemmaModel
-  @@default_file = "data/trening-u-flert-d.cor"
+  @@default_file = "data/trening-u-flert-d.train.cor"
   
   def initialize
     text = obno_read(@@default_file)
