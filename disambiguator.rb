@@ -1,6 +1,7 @@
 require 'iconv'
 require 'disambiguation_context'
 require 'disambiguation_unit'
+require 'lemma_model'
 
 class Disambiguator
   attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx,
@@ -60,7 +61,8 @@ class Disambiguator
 
     # build lemma model
     info_message "Building lemma model"
-    $lemma_model = LemmaModel.new
+    $lemma_model = LemmaModel.new(@evaluator)
+    $lemma_model.read_lemma_model $default_lemma_model
     info_message "Finished building lemma model"
     
     # store all data in context

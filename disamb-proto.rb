@@ -7,13 +7,14 @@ require "obno_stubs"
 require "obno_text"
 require "disambiguator"
 require "evaluator"
-require "lemma_model"
 require "trace_logger"
 
 # Hunpos command and default model file
 # $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
 $hunpos_default_model = "./hunpos.model"
+
+$default_lemma_model = "data/trening-u-flert-d.lemma_model"
 
 # Globally available instanes of the lemma model and trace logger
 $tracer = nil
@@ -25,7 +26,7 @@ $verbose_output = nil
 # helper function for loading cor files in the irb
 def obno_read(file)
   text = Text.new
-
+  
   OBNOText.parse text, File.open(file).read
 
   return text

@@ -1,18 +1,34 @@
+require 'evaluator'
+
 class LemmaModel
   @@default_file = "data/trening-u-flert-d.train.cor"
-  
-  def initialize
-    text = obno_read(@@default_file)
 
-    @model = create_lemma_model(text)
+  @@lemma_data_sep = "^"
+  
+  def initialize(evaluator, file = @@default_file)
+    # text = Text.new
+
+#     if file == $stdin
+#       OBNOText.parse text, $stdin
+#     else
+#       text = obno_read(@@default_file)
+#     end
+
+#     @model = create_lemma_model(text)
+
+    @evaluator = evaluator
   end
 
   def disambiguate_lemma(word, lemma_list)
     word_lookup = @model[word]
 
     if word_lookup.nil?
+      @evaluator.mark_lemma_miss
+      
       return lemma_list.first
     end
+
+    @evaluator.mark_lemma_hit
     
     best_score = 0
     best_lemma = nil
@@ -61,7 +77,7 @@ class LemmaModel
   end
 
   def create_lemma_model(text)
-    model = {}
+    @model = {}
     lc = lemma_counts(text)
 
     lc.first.each do |k, v|
@@ -73,10 +89,58 @@ class LemmaModel
         lemma_probs << [k, v / total.to_f]
       end
 
-      model[word] = lemma_probs
+      @model[word] = lemma_probs
     end
 
-    return model
+    return @model
   end
 
+  def write_lemma_model(file)
+    f = nil
+    
+    if file == $stdout
+      f = $stdout
+    else
+      f = File.open(file, 'w')
+    end
+    
+    f.puts "version 1"
+    
+    @model.each do |k, v|
+      f.puts k + "\t" + v.collect{ |e| e.join(@@lemma_data_sep)}.join("\t")
+    end
+
+    if f != $stdout
+      f.close
+    end
+  end
+
+  def read_lemma_model(file)
+    @model = {}
+    File.open(file, 'r') do |f|
+      if f.readline.strip() != "version 1"
+        raise RuntimeError
+      end
+
+      f.each_line do |l|
+        tokens = l.split("\t")
+        word = tokens[0]
+        lemmadata = tokens[1...tokens.count]
+
+        lemmas = lemmadata.collect do |e|
+          e = e.split(@@lemma_data_sep)
+          raise RuntimeError if e.count != 2
+          [e[0], e[1].to_f]
+        end
+
+        if @model[word]
+          raise RuntimeError
+        end
+        
+        @model[word] = lemmas
+      end
+    end
+
+    return @model
+  end
 end
