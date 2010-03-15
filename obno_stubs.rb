@@ -33,10 +33,14 @@ class Sentence
   def to_s
     @words.collect {|w| w.normalized_string }.join(' ')
   end
+
+  def to_orig_s
+    @words.collect { |w| w.orig_string }.join(' ')
+  end
 end
 
 class Word
-  attr_accessor :string, :sentence_index, :tag_count, :tags
+  attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags
 
   def initialize
     @tags = []
