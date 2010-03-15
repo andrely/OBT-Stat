@@ -1,0 +1,338 @@
+"<hjertesukk>"
+	"hjertesukk"	subst mask appell ent ub
+	"hjertesukk"	subst mask appell fl ub
+	"hjertesukk"	subst nøyt appell ent ub	<Correct!>
+	"hjertesukk"	subst nøyt appell fl ub
+"<fra>"
+	"fra"	prep	<Correct!>
+"<administrerende>"
+	"administrere"	adj <pres-part> tr1	<Correct!>
+"<direktør>"
+	"direktør"	subst mask appell ent ub	<Correct!>
+"<i>"
+	"i"	prep	<Correct!>
+"<kongsberg-gruppen>"
+	"kongsberg-gruppe"	subst mask appell ent be samset  <*>	<Correct!>
+"<$:>"
+	"$:"	clb <kolon>	<Correct!>
+"<frustrert>"
+	"frustrere"	adj <perf-part> m/f ub ent tr10 tr15
+	"frustrere"	adj <perf-part> nøyt ub ent tr10 tr15
+	"frustrere"	verb perf-part tr10 tr15	<Correct!>
+"<over>"
+	"over"	prep	<Correct!>
+"<mistenkeliggjørelsen>"
+	"mistenkeliggjørelse"	subst mask appell ent be	<Correct!>
+"<$|>"
+	"$|"	clb <overskrift>	<Correct!>
+"<forsvarsindustrien>"
+	"forsvarsindustri"	subst mask appell ent be	<Correct!>
+"<er>"
+	"være"	verb pres pr1 pr2 <aux1/perf_part> a5	<Correct!>
+"<frustrert>"
+	"frustrere"	adj <perf-part> m/f ub ent tr10 tr15
+	"frustrere"	adj <perf-part> nøyt ub ent tr10 tr15
+	"frustrere"	verb perf-part tr10 tr15	<Correct!>
+"<over>"
+	"over"	prep	<Correct!>
+"<en>"
+	"en"	adv
+	"en"	det kvant mask ent	<Correct!>
+	"en"	pron pers ent hum
+	"ene"	verb imp tr1
+"<stadig>"
+	"stadig"	adj pos m/f ub ent	<Correct!>
+	"stadig"	adj pos nøyt ub ent
+"<mistenkeliggjørelse>"
+	"mistenkeliggjørelse"	subst mask appell ent ub	<Correct!>
+"<fra>"
+	"fra"	prep	<Correct!>
+"<politisk>"
+	"politisk"	adj pos m/f ub ent
+	"politisk"	adj pos nøyt ub ent	<Correct!>
+"<hold>"
+	"hold"	subst nøyt appell ent ub	<Correct!>
+	"hold"	subst nøyt appell fl ub
+	"holde"	verb imp tr1 tr11 pa1 a9 pr7 pr6
+"<og>"
+	"og"	clb konj
+	"og"	adv
+	"og"	konj	<Correct!>
+"<i>"
+	"i"	prep	<Correct!>
+"<mediene>"
+	"medium"	subst nøyt appell fl be	<Correct!>
+"<$.>"
+	"$."	clb <PUNKT>	<Correct!>
+"<olav>"
+	"olav"	subst prop  <*>	<Correct!>
+"<trygge>"
+	"trygg"	adj pos be ent
+	"trygg"	adj pos fl
+	"trygge"	verb inf tr1 d5 rl9 rl9/til rl6
+"<storvik>"
+	"storvik"	subst prop  <*>	<Correct!>
+"<$|>"
+	"$|"	clb <overskrift>	<Correct!>
+"<det>"
+	"det"	det dem nøyt ent
+	"det"	pron pers 3 ent nøyt	<Correct!>
+"<er>"
+	"være"	verb pres pr1 pr2 <aux1/perf_part> a5	<Correct!>
+"<administrerende>"
+	"administrere"	adj <pres-part> tr1	<Correct!>
+"<direktør>"
+	"direktør"	subst mask appell ent ub	<Correct!>
+"<i>"
+	"i"	prep	<Correct!>
+"<kongsberg-gruppen>"
+	"kongsberg-gruppe"	subst mask appell ent be samset  <*>	<Correct!>
+"<jan>"
+	"jan"	subst mask prop  <*>	<Correct!>
+"<t.>"
+	"t."	fork subst prop  <*>	<Correct!>
+"<jørgensen>"
+	"jørgensen"	subst prop  <*>	<Correct!>
+"<som>"
+	"som"	prep
+	"som"	sbu	<Correct!>
+"<gir>"
+	"gi"	verb pres d1 d4 rl4 tr1 tr2 pa3 tr11 tr11/til pa1 pa5 d5 d5/til rl9 rl3	<Correct!>
+	"gir"	subst mask appell ent ub
+	"gir"	subst nøyt appell ent ub
+	"gir"	subst nøyt appell fl ub
+	"gire"	verb imp i1
+	"gire"	verb imp i1 pa5
+	"gire"	verb imp tr11 tr15
+"<uttrykk>"
+	"uttrykk"	subst nøyt appell ent ub	<Correct!>
+	"uttrykk"	subst nøyt appell fl ub
+	"uttrykke"	verb imp tr1
+"<for>"
+	"fare"	verb pret a3 pa4 tr11 pa5 pr11
+	"for"	clb konj
+	"for"	adv
+	"for"	prep	<Correct!>
+	"fore"	verb imp
+"<dette>"
+	"dette"	det dem nøyt ent
+	"dette"	pron pers 3 ent nøyt	<Correct!>
+	"dette"	verb inf i2 pa4
+"<i>"
+	"i"	prep	<Correct!>
+"<en>"
+	"en"	adv
+	"en"	det kvant mask ent	<Correct!>
+	"en"	pron pers ent hum
+	"ene"	verb imp tr1
+"<samtale>"
+	"samtale"	subst mask appell ent ub	<Correct!>
+	"samtale"	verb inf tr11 i4
+"<med>"
+	"med"	prep	<Correct!>
+"<aftenposten>"
+	"aftenposten"	subst mask prop  <*>	<Correct!>
+"<$.>"
+	"$."	clb <PUNKT>	<Correct!>
+"<$->"
+	"$-"	<strek>	<Correct!>
+"<vi>"
+	"vi"	pron pers 1 fl hum nom	<Correct!>
+	"vie"	verb imp tr1 d7/til d1
+"<blir>"
+	"bli"	verb pres pr1 pr2 i2 a5 tr5 pa4/til <aux1/perf_part>	<Correct!>
+"<stadig>"
+	"stadig"	adj pos m/f ub ent
+	"stadig"	adj pos nøyt ub ent	<Correct!>
+"<mistenkeliggjort>"
+	"mistenkeliggjøre"	adj <perf-part> m/f ub ent tr1
+	"mistenkeliggjøre"	adj <perf-part> nøyt ub ent tr1
+	"mistenkeliggjøre"	verb perf-part tr1	<Correct!>
+"<$,>"
+	"$,"	clb <komma>
+	"$,"	<komma>	<Correct!>
+"<mens>"
+	"mens"	sbu	<Correct!>
+	"mens"	subst mask appell ent ub
+	"mens"	subst mask appell fl ub
+	"men"	subst nøyt appell ent ub gen
+	"men"	subst nøyt appell fl ub gen
+"<virkeligheten>"
+	"virkelighet"	subst mask appell ent be	<Correct!>
+"<er>"
+	"være"	verb pres pr1 pr2 <aux1/perf_part> a5	<Correct!>
+"<at>"
+	"at"	sbu	<Correct!>
+"<vi>"
+	"vi"	pron pers 1 fl hum nom	<Correct!>
+	"vie"	verb imp tr1 d7/til d1
+"<driver>"
+	"driv"	<leks-entall> subst mask appell fl ub
+	"drive"	subst fem appell fl ub
+	"drive"	subst mask appell fl ub
+	"drive"	verb pres i2 tr1 tr11	<Correct!>
+	"driver"	subst mask appell ent ub
+"<en>"
+	"en"	adv
+	"en"	det kvant mask ent	<Correct!>
+	"en"	pron pers ent hum
+	"ene"	verb imp tr1
+"<legitim>"
+	"legitim"	adj pos m/f ub ent	<Correct!>
+"<virksomhet>"
+	"virksomhet"	subst fem appell ent ub
+	"virksomhet"	subst mask appell ent ub	<Correct!>
+"<av>"
+	"av"	prep	<Correct!>
+"<meget>"
+	"meget"	adv	<Correct!>
+	"meget"	subst mask appell ent ub
+	"meget"	subst mask appell fl ub
+	"mige"	adj <perf-part> m/f ub ent i1
+	"mige"	adj <perf-part> nøyt ub ent i1
+	"mige"	verb perf-part i1
+"<stor>"
+	"stor"	adj pos m/f ub ent	<Correct!>
+"<betydning>"
+	"betydning"	subst mask appell ent ub	<Correct!>
+"<for>"
+	"fare"	verb pret a3 pa4 tr11 pa5 pr11
+	"for"	clb konj
+	"for"	adv
+	"for"	prep	<Correct!>
+	"fore"	verb imp
+"<landet>"
+	"land"	subst nøyt appell ent be	<Correct!>
+	"lande"	adj <perf-part> m/f ub ent i1
+	"lande"	adj <perf-part> m/f ub ent i2
+	"lande"	adj <perf-part> nøyt ub ent i1
+	"lande"	adj <perf-part> nøyt ub ent i2
+	"lande"	verb perf-part i1
+	"lande"	verb perf-part i2
+	"lande"	verb pret i1
+	"lande"	verb pret i2
+"<$,>"
+	"$,"	clb <komma>
+	"$,"	<komma>	<Correct!>
+"<sivilt>"
+	"sivil"	adj pos nøyt ub ent	<Correct!>
+"<som>"
+	"som"	prep	<Correct!>
+	"som"	sbu
+"<militært>"
+	"militær"	adj pos nøyt ub ent	<Correct!>
+"<$,>"
+	"$,"	clb <komma>	<Correct!>
+	"$,"	<komma>
+"<sier>"
+	"si"	verb pres tr1 tr2 d1 d4 tr11 pa1 d5 pa3	<Correct!>
+"<jørgensen>"
+	"jørgensen"	subst prop  <*>	<Correct!>
+"<$.>"
+	"$."	clb <PUNKT>	<Correct!>
+"<han>"
+	"han"	pron pers 3 ent mask hum akk
+	"han"	pron pers 3 ent mask hum nom	<Correct!>
+"<legger>"
+	"legg"	subst mask appell fl ub
+	"legge"	verb pres rl4 tr1 pa1 pa1/til a6 pa5 rl14 pr6 rl15 tr11 tr11/til tr20/til	<Correct!>
+	"legger"	subst mask appell ent ub
+"<ikke>"
+	"ikke"	adv	<Correct!>
+"<skjul>"
+	"skjul"	subst nøyt appell ent ub	<Correct!>
+	"skjul"	subst nøyt appell fl ub
+	"skjule"	verb imp tr1 rl4 tr2 d5 rl9 a6 rl15
+"<på>"
+	"på"	prep	<Correct!>
+"<sin>"
+	"sin"	fork subst
+	"sin"	det poss mask ent	<Correct!>
+"<irritasjon>"
+	"irritasjon"	subst mask appell ent ub	<Correct!>
+"<over>"
+	"over"	prep	<Correct!>
+"<det>"
+	"det"	det dem nøyt ent	<Correct!>
+	"det"	pron pers 3 ent nøyt
+"<bilde>"
+	"bilde"	subst nøyt appell ent ub	<Correct!>
+"<av>"
+	"av"	prep	<Correct!>
+"<forsvarsindustrien>"
+	"forsvarsindustri"	subst mask appell ent be	<Correct!>
+"<som>"
+	"som"	prep
+	"som"	sbu	<Correct!>
+"<forsøkes>"
+	"forsøke"	verb inf pres pass tr1 rl4 tr3 rl9	<Correct!>
+	"forsøke"	verb inf tr1 rl4 tr3 rl9 gen
+"<skapt>"
+	"skape"	adj <perf-part> m/f ub ent tr9 rl4 pa1 rl6
+	"skape"	adj <perf-part> nøyt ub ent tr9 rl4 pa1 rl6
+	"skape"	verb perf-part tr9 rl4 pa1 rl6	<Correct!>
+"<fra>"
+	"fra"	prep	<Correct!>
+"<enkelte>"
+	"enkelt"	adj pos be ent
+	"enkelt"	adj pos fl	<Correct!>
+"<hold>"
+	"hold"	subst nøyt appell ent ub
+	"hold"	subst nøyt appell fl ub	<Correct!>
+	"holde"	verb imp tr1 tr11 pa1 a9 pr7 pr6
+"<$.>"
+	"$."	clb <PUNKT>	<Correct!>
+"<$->"
+	"$-"	<strek>	<Correct!>
+"<i>"
+	"i"	det <romertall> <*>
+	"i"	prep	<Correct!>
+	"i"	subst prop <*>
+"<industrien>"
+	"industri"	subst mask appell ent be	<Correct!>
+"<har>"
+	"ha"	verb pres tr6 pa1 d6/til rl6 <aux1/perf_part> pa3 tr12 d5 a6 pa6	<Correct!>
+"<vi>"
+	"vi"	pron pers 1 fl hum nom	<Correct!>
+	"vie"	verb imp tr1 d7/til d1
+"<ingen>"
+	"ingen"	det kvant fl	<Correct!>
+	"ingen"	det kvant mask ent
+	"ingen"	pron pers 3 ent mask fem
+	"ingen"	pron pers 3 fl
+"<problemer>"
+	"problem"	subst nøyt appell fl ub	<Correct!>
+"<med>"
+	"med"	prep	<Correct!>
+"<de>"
+	"de"	det dem fl	<Correct!>
+	"de"	pron pers 3 fl nom
+"<reglene>"
+	"regel"	subst mask appell fl be	<Correct!>
+	"regle"	subst fem appell fl be
+	"regle"	subst mask appell fl be
+"<myndighetene>"
+	"myndighet"	subst fem appell fl be	<Correct!>
+	"myndighet"	subst mask appell fl be
+"<har>"
+	"ha"	verb pres tr6 pa1 d6/til rl6 <aux1/perf_part> pa3 tr12 d5 a6 pa6	<Correct!>
+"<fastsatt>"
+	"fastsette"	adj <perf-part> m/f ub ent tr1
+	"fastsette"	adj <perf-part> nøyt ub ent tr1
+	"fastsette"	verb perf-part tr1	<Correct!>
+"<for>"
+	"fare"	verb pret a3 pa4 tr11 pa5 pr11
+	"for"	clb konj
+	"for"	adv
+	"for"	prep	<Correct!>
+	"fore"	verb imp
+"<eksport>"
+	"eksport"	subst mask appell ent ub	<Correct!>
+"<av>"
+	"av"	prep	<Correct!>
+"<forsvarsmateriell>"
+	"forsvarsmateriell"	adj pos m/f ub ent samset
+	"forsvarsmateriell"	subst nøyt appell ent ub samset
+	"forsvarsmateriell"	subst nøyt appell fl ub samset	<Correct!>
+"<$.>"
+	"$."	clb <PUNKT>	<Correct!>

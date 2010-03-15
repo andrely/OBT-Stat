@@ -2,21 +2,38 @@ require 'evaluator'
 
 class LemmaModel
   @@default_file = "data/trening-u-flert-d.train.cor"
-
+  @@version_1_file_header = "version 1"
   @@lemma_data_sep = "^"
+
+  attr_reader :model
   
-  def initialize(evaluator, file = @@default_file)
-    # text = Text.new
-
-#     if file == $stdin
-#       OBNOText.parse text, $stdin
-#     else
-#       text = obno_read(@@default_file)
-#     end
-
-#     @model = create_lemma_model(text)
+  def initialize(evaluator = nil, file = @@default_file)
+    @model = {}
 
     @evaluator = evaluator
+  end
+  
+  def model_entry(word)
+    return @model[word]
+  end
+
+  
+  def top_lemma(word)
+    lemmas = @model[word]
+
+    return nil if lemmas.nil?
+
+    top_result = nil
+
+    lemmas.each do |l|
+      if top_result.nil?
+        top_result = l
+      elsif l[1] > top_result[1]
+        top_result = l
+      end
+    end
+
+    return top_result[0]
   end
 
   def disambiguate_lemma(word, lemma_list)
@@ -75,9 +92,32 @@ class LemmaModel
 
     return [lemma_counts, no_correct]
   end
-
-  def create_lemma_model(text)
+  
+  # creates a lemma model based on the cor file
+  # passed as the file argument, and stores this model
+  # in the @model instance variable.
+  # file - a proprly formatted cor file. $stdin may be passed
+  #        allowing the data to be read from it.
+  # returns the populated @model variable
+  def create_lemma_model(file)
+    filedata = nil
     @model = {}
+
+    # check if $stdin is passed and read from the fiole or
+    # input stream as appropriate
+    if file == $stdin
+      filedata = $stdin.read
+    else
+      File.open(file) do |f|
+        filedata = f.read
+      end
+    end
+    
+    # parse the cor text data
+    text = Text.new
+    OBNOText.parse text, filedata
+    
+    # collect correct lemma counts and construct model
     lc = lemma_counts(text)
 
     lc.first.each do |k, v|
@@ -94,7 +134,13 @@ class LemmaModel
 
     return @model
   end
-
+  
+  # Writes the lemma model to a file. The first line in the file is a
+  # version header. Subsequent lines contains word forms and lemma/probability
+  # pairs sepated by tabs. The lemma strings and probability are separated by
+  # a ^ (hat) character.
+  # file - the file name to write the model to.
+  # returns nil
   def write_lemma_model(file)
     f = nil
     
@@ -104,7 +150,7 @@ class LemmaModel
       f = File.open(file, 'w')
     end
     
-    f.puts "version 1"
+    f.puts @@version_1_file_header
     
     @model.each do |k, v|
       f.puts k + "\t" + v.collect{ |e| e.join(@@lemma_data_sep)}.join("\t")
@@ -115,10 +161,14 @@ class LemmaModel
     end
   end
 
+  # Reads a lemma model from file, and binds it to the @model instance variable.
+  # file - name of a file containing a properly formatted model.
+  # returns the populated @model instance variable
   def read_lemma_model(file)
     @model = {}
     File.open(file, 'r') do |f|
-      if f.readline.strip() != "version 1"
+      # first line should be a valid header
+      if f.readline.strip() != @@version_1_file_header
         raise RuntimeError
       end
 

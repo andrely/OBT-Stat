@@ -59,6 +59,7 @@ if __FILE__ == $0
   opts = GetoptLong.new(["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT],
                         ["--input", "-i", GetoptLong::REQUIRED_ARGUMENT],
                         ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--lemma-model", "-a", GetoptLong::REQUIRED_ARGUMENT],
                         ["--verbose", "-v", GetoptLong::NO_ARGUMENT],
                         ["--log", "-l", GetoptLong::REQUIRED_ARGUMENT])
 
@@ -70,6 +71,8 @@ if __FILE__ == $0
         input_file = arg.inspect.delete('"')
     when "--model":
         $hunpos_default_model = arg.inspect.delete('"')
+    when "--lemma-model":
+        $default_lemma_model = arg.inspect.delete('"')
     when "--verbose":
         $verbose_output = true
     when "--log":
