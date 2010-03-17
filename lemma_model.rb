@@ -109,29 +109,26 @@ class LemmaModel
       filedata = $stdin.read
     else
       File.open(file) do |f|
-        filedata = f.read
+        # parse the cor text data
+        text = OBNOText.parse f
+
+        # collect correct lemma counts and construct model
+        lc = lemma_counts(text)
+
+        lc.first.each do |k, v|
+          word = k
+          total = v.values.inject { |sum, n| sum + n }
+          lemma_probs = []
+
+          v.each do |k, v|
+            lemma_probs << [k, v / total.to_f]
+          end
+
+          @model[word] = lemma_probs
+        end
       end
     end
     
-    # parse the cor text data
-    text = Text.new
-    OBNOText.parse text, filedata
-    
-    # collect correct lemma counts and construct model
-    lc = lemma_counts(text)
-
-    lc.first.each do |k, v|
-      word = k
-      total = v.values.inject { |sum, n| sum + n }
-      lemma_probs = []
-
-      v.each do |k, v|
-        lemma_probs << [k, v / total.to_f]
-      end
-
-      @model[word] = lemma_probs
-    end
-
     return @model
   end
   

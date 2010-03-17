@@ -14,10 +14,11 @@ class OBNOText
   
   # Parses the OB text in filedata and populates the Text instance argument
   # with the result.
-  # textinst - A Text instance where the parsed data is stored
-  # filedata - The input data lines as a single string
+  # file - A File instance to read input from
   # returns true
-  def self.parse(textinst, filedata)
+  def self.parse(file)
+    text = Text.new
+    
     word = nil
     orig_word = nil
     sentence = Sentence.new
@@ -25,7 +26,7 @@ class OBNOText
     index = 0
     tag_index = 0
 
-    filedata.each_line do |line|
+    file.each_line do |line|
       # if there is an original word form, store it and put in the Word instance
       # when we encounter the OB word line
       if isOrigWordLine(line)
@@ -60,7 +61,7 @@ class OBNOText
         if isPunctuation(word.string) then
           sentence.length = index
           sentence.text_index = sent_count
-          textinst.sentences << sentence
+          text.sentences << sentence
           sentence = Sentence.new
           index = 0
           sent_count += 1
@@ -85,11 +86,13 @@ class OBNOText
     if index > 0 then
       sentence.length = index
       sentence.text_index = sent_count
-      textinst.sentences << sentence
+      text.sentences << sentence
       sent_count += 1
     end
-    textinst.sentence_count = sent_count
-    textinst.save!
+    text.sentence_count = sent_count
+    text.save!
+
+    return text
   end
 
   def self.textString(text)

@@ -61,9 +61,7 @@ end
 
 # block
 def do_cor_input_block(train_file, held_file, eval_file)
-  text = Text.new
-
-  OBNOText.parse text, $stdin.read
+  text = OBNOText.parse $stdin
   
   total = text.sentences.count
   train = (total * 0.8).floor
@@ -102,9 +100,7 @@ def do_cor_input_block(train_file, held_file, eval_file)
 end
 
 def do_cor_input_interleave(train_file, held_file, eval_file)
-  text = Text.new
-
-  OBNOText.parse text, $stdin.read
+  text = OBNOText.parse $stdin
 
   index = 0
   fd = nil

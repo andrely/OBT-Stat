@@ -23,15 +23,6 @@ $lemma_model = nil
 # set to true for progress info and evaluation output
 $verbose_output = nil
 
-# helper function for loading cor files in the irb
-def obno_read(file)
-  text = Text.new
-  
-  OBNOText.parse text, File.open(file).read
-
-  return text
-end
-
 # prints messages to $stderr if the verbose switch is set
 def info_message(msg, newline = true)
   $stderr.print msg if $verbose_output

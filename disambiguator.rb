@@ -47,11 +47,13 @@ class Disambiguator
     context = DisambiguationContext.new
 
     # get input
-    @text = Text.new
+    @text = nil
     if @input_file.nil?
-      OBNOText.parse @text, $stdin.read
+      @text = OBNOText.parse $stdin
     else
-      OBNOText.parse @text, File.open(@input_file).read
+      File.open(@input_file) do |f|
+        @text = OBNOText.parse f
+      end
     end
 
     # run Hunpos
