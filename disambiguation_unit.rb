@@ -64,11 +64,11 @@ class DisambiguationUnit
                 
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
         
-        return [@input.string, tag.lemma, tag.clean_out_tag]
+        return [(@input.orig_string or @input.string), tag.lemma, tag.clean_out_tag]
       end
     else
       raise RuntimeError if @input.tags.length > 1
-      return [@input.string, @input.tags.first.lemma, @input.tags.first.clean_out_tag]
+      return [(@input.orig_string or @input.string), @input.tags.first.lemma, @input.tags.first.clean_out_tag]
     end
   end
 end
