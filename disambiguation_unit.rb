@@ -68,7 +68,7 @@ class DisambiguationUnit
       end
     else
       raise RuntimeError if @input.tags.length > 1
-      return [@input.string, @input.tags.first.lemma, @input.tags.first.clean_out_tag]
+      return [(@input.orig_string or @input.string), @input.tags.first.lemma, @input.tags.first.clean_out_tag]
     end
   end
 end
