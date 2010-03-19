@@ -84,8 +84,12 @@ class Evaluator
     @hunpos_correct_count += 1
   end
 
-  def mark_lemma_correct
-    @lemma_correct_count += 1
+  def mark_lemma(lemma, context)
+    eval = context.current(:eval)[2]
+
+    if lemma == eval
+      @lemma_correct_count += 1
+    end
   end
 
   def mark_unaligned_eval

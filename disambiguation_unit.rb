@@ -1,14 +1,15 @@
 require 'tracer'
 
 class DisambiguationUnit
-  def initialize(input, eval, hunpos, evaluator, pos)
+  def initialize(input, eval, hunpos, evaluator, context)
     @input = input
     @eval = eval
     @hunpos = hunpos
 
     @evaluator = evaluator
-
-    @pos = pos
+    
+    @context = context
+    @pos = context.input_idx
   end
 
   def resolve
@@ -36,7 +37,7 @@ class DisambiguationUnit
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
 
         if @eval
-          @evaluator.mark_lemma_correct if lemma == @eval[2]
+          @evaluator.mark_lemma lemma, @context
         end
         
         return [@input.output_string, lemma, @hunpos[1]]
@@ -59,7 +60,7 @@ class DisambiguationUnit
         @evaluator.mark_ob_resolved
         # do not count correct lemmas that was not available from OB
         if @eval
-          @evaluator.mark_lemma_correct if lemma == @eval[2] and not tags.nil?
+          @evaluator.mark_lemma(lemma, @context) if not tags.nil?
         end
                 
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"

@@ -88,7 +88,10 @@ class Disambiguator
 
     word_s = word.normalized_string
     hun_s = hun.first
-
+    
+    # if there is no eval corpus loaded eval is nil and we
+    # substitute the current word for synchronization
+    # checking
     if eval
       eval_s = eval.first
     else
@@ -112,7 +115,7 @@ class Disambiguator
       end
     end
 
-    unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context.input_idx)
+    unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context)
     output = unit.resolve
 
     puts "#{output[0]}\t#{output[1]}\t#{output[2]}"
