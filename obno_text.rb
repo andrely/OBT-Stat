@@ -94,25 +94,6 @@ class OBNOText
     return text
   end
 
-  def self.textString(text)
-    ret_str = []
-    # sentences = text.sentences.sort_by {|s| s.text_index }
-    sentences = Sentence.find(:all, :conditions => ["tagged_text_id = ?", text.id], :order => "text_index", :include => [:words])
-    sentences.each do |s|
-      # words = s.words.sort_by {|w| w.sentence_index }
-      words = Word.find(:all, :conditions => ["sentence_id = ?", s.id], :order => "sentence_index", :include => [:tags])
-      words.each do |w|
-        ret_str << '"<' + w.string + '>"'
-        tags = w.tags.sort_by {|t| t.index }
-        tags.each do |t|
-          ret_str << "\t" + '"' + t.lemma + '" ' + t.string + (t.correct ? ' <Correct!>' : '')
-        end
-      end
-    end
-
-    ret_str.join("\n")
-  end
-
   def self.isWordLine(line)
     line.match(@word_regex)
   end
