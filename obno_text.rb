@@ -9,9 +9,6 @@ class OBNOText
   @punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
   @orig_word_regex = Regexp.compile('^<word>(.*)</word>$')
 
-  def initialize()
-  end
-  
   # Parses the OB text in filedata and populates the Text instance argument
   # with the result.
   # file - A File instance to read input from
