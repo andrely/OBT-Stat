@@ -90,7 +90,6 @@ class OBNOText
       sent_count += 1
     end
     text.sentence_count = sent_count
-    text.save!
 
     return text
   end

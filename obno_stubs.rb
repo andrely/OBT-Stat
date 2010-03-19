@@ -7,11 +7,6 @@ class Text
     @sentences = []
   end
 
-  # stub of ActiveRecord method
-  def save!
-    true
-  end
-  
   # returns a flattened array of all words in the
   # text instance
   def words
