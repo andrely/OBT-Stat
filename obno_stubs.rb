@@ -53,6 +53,13 @@ class Word
     string = string.gsub(/\$([\.\:\|\?\!\,\(\)\-\"\;])/, '\1')
     return string.gsub(/\s/, '_')
   end
+  
+  # returns the appropriate string for output from the tagger
+  # that is the original string if available otherwise the OB
+  # word form string
+  def output_string
+    return (@orig_string or @string)
+  end
 
   def tag_by_string(str)
     @tags.each do |t|
