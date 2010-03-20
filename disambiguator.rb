@@ -11,13 +11,13 @@ class Disambiguator
     @evaluator = evaluator
   end
 
-  def run_hunpos
+  def self.run_hunpos(text)
     info_message($hunpos_command + " " + $hunpos_default_model)
     
     hunpos_output = []
     
     File.open('temp', 'w') do |f|
-      @text.sentences.each do |s|
+      text.sentences.each do |s|
         s.words.each do |w|
            f.puts w.normalized_string
         end
@@ -60,7 +60,7 @@ class Disambiguator
 
     # run Hunpos
     info_message "Start running HunPos"
-    @hunpos_output = run_hunpos
+    @hunpos_output = Disambiguator.run_hunpos @text
     info_message "Finished running HunPos"
 
     # build lemma model
