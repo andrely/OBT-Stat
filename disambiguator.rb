@@ -14,7 +14,7 @@ class Disambiguator
   def run_hunpos
     info_message($hunpos_command + " " + $hunpos_default_model)
     
-    @hunpos_output = []
+    hunpos_output = []
     
     File.open('temp', 'w') do |f|
       @text.sentences.each do |s|
@@ -34,11 +34,13 @@ class Disambiguator
       # skip empty lines separating sentences
       if not line == ""
         hun_word, hun_tag = line.split(/\s/)
-        @hunpos_output.push([hun_word, hun_tag])
+        hunpos_output.push([hun_word, hun_tag])
       end
     end
 
     io.close
+
+    return hunpos_output
   end
 
   # This function drives the disambiguation loop over
@@ -58,7 +60,7 @@ class Disambiguator
 
     # run Hunpos
     info_message "Start running HunPos"
-    run_hunpos
+    @hunpos_output = run_hunpos
     info_message "Finished running HunPos"
 
     # build lemma model
@@ -121,5 +123,9 @@ class Disambiguator
     puts "#{output[0]}\t#{output[1]}\t#{output[2]}"
         
     return true
+  end
+
+  def self.token_word_count(token)
+    return token.split('_').count
   end
 end
