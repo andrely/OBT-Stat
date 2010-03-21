@@ -15,6 +15,8 @@ class Evaluator
     @lemma_correct_count = 0
     @lemma_hit_count = 0
     @lemma_lookup_count = 0
+
+    @lemma_error_map = { }
     
     if evaluation_file
       @evaluation_data = read_eval_data
@@ -87,8 +89,25 @@ class Evaluator
   def mark_lemma(lemma, context)
     eval = context.current(:eval)[2]
 
+    return if eval.nil? or lemma.nil?
+
     if lemma == eval
       @lemma_correct_count += 1
+
+      return
+    end
+
+    if not @lemma_error_map.has_key? eval
+      @lemma_error_map[eval] = { lemma => 1 }
+    else
+      data = @lemma_error_map[eval]
+      
+      if data[lemma]
+        data[lemma] += 1
+      else
+        data[lemma] = 1
+      end
+      
     end
   end
 
@@ -113,5 +132,12 @@ class Evaluator
     info_message "Lemma model hit/use ratio: #{@lemma_hit_count}/#{@lemma_lookup_count}"
     info_message "Collocations: #{@collocation_unresolved_count}"
     info_message "Unaligned evaluation tokens: #{@unaligned_eval_count}"
+
+    @lemma_error_map.each do |k, v|
+      data = v.collect do |kk, vv|
+        "#{kk} #{vv}"
+      end
+      info_message "#{k}\t#{data.join("\t")}"
+    end
   end
 end
