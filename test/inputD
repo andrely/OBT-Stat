@@ -1,0 +1,73 @@
+"<vi>"
+	"vi" pron fl pers hum nom 1 
+"<er>"
+	"være" verb pres a5 pr1 pr2 <aux1/perf_part> 
+"<i_ferd_med>"
+	"i_ferd_med" ukjent 
+"<fullstendig>"
+	"fullstendig" adj ub m/f ent pos 
+	"fullstendig" adj nøyt ub ent pos 
+"<å>"
+	"å" inf-merke 
+"<underminere>"
+	"underminere" verb inf tr1 
+"<vår>"
+	"vår" det mask ent poss 
+	"vår" det fem ent poss 
+"<konkurranseevne>"
+	"konkurranseevne" subst appell fem ub ent 
+	"konkurranseevne" subst appell mask ub ent 
+"<,>"
+	"$," clb <komma> 
+	"$," <komma> 
+"<de>"
+	"de" det dem fl 
+"<fortrinn>"
+	"fortrinn" subst appell nøyt ub fl 
+"<vi>"
+	"vi" pron fl pers hum nom 1 
+"<har>"
+	"ha" verb pres pa1 d5 a6 tr12 rl6 pa3 tr6 d6/til <aux1/perf_part> pa6 
+"<fra>"
+	"fra" prep 
+"<naturens>"
+	"natur" subst appell mask be ent gen 
+"<side>"
+	"side" subst appell fem ub ent 
+	"side" subst appell mask ub ent 
+"<og>"
+	"og" konj 
+"<det>"
+	"det" det dem nøyt ent 
+"<enorme>"
+	"enorm" adj be ent pos 
+"<potensialet>"
+	"potensial" subst appell nøyt be ent 
+	"potensiale" subst appell nøyt be ent 
+"<for>"
+	"for" prep 
+"<vekst>"
+	"vekst" subst appell mask ub ent 
+"<og>"
+	"og" konj 
+"<verdiskapning>"
+	"verdiskapning" subst appell fem ub ent 
+	"verdiskapning" subst appell mask ub ent 
+"<som>"
+	"som" sbu 
+"<ligger>"
+	"ligge" verb pres i2 tr11 pa4 a5 
+"<i>"
+	"i" prep 
+"<det>"
+	"det" det dem nøyt ent 
+"<internasjonale>"
+	"internasjonal" adj be ent pos 
+"<ferdigvaremarkedet>"
+	"ferdigvaremarked" subst appell nøyt be ent samset 
+"<for>"
+	"for" prep 
+"<havbruksprodukter>"
+	"havbruksprodukt" subst appell nøyt ub fl samset 
+"<.>"
+	"$." clb <punkt> 

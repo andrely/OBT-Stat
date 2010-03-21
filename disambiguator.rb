@@ -101,26 +101,22 @@ class Disambiguator
     end
 
     if not (word_s == eval_s and word_s == hun_s)
-      # try to append next eval token
-      eval_cur = context.pos(:eval)
-      eval_next = context.at(:eval, eval_cur + 1)
+      out_words = context.synchronize
 
-      if eval_s + eval_next[0] == word_s and word_s == hun_s
-        # if this works advance eval index by 1
-        context.eval_idx += 1
-      elsif eval_s + '_' + eval_next[0] == word_s and word_s == hun_s
-        context.eval_idx += 1
-      else
-        # if not throw error
-        info_message "#{word_s} : #{eval_s} : #{hun_s}"
-        raise RuntimeError
+      out_words.each do |w|
+        raise RuntimeError if w.ambigious?
+
+        tag = w.get_correct_tag
+
+        puts "#{w.normalized_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
       end
+    else
+      unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context)
+      output = unit.resolve
+      
+      puts "#{output[0]}\t#{output[1]}\t#{output[2]}"
+
     end
-
-    unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context)
-    output = unit.resolve
-
-    puts "#{output[0]}\t#{output[1]}\t#{output[2]}"
         
     return true
   end

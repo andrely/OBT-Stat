@@ -45,7 +45,7 @@ class DisambiguationContext
           raise "End of data out of sync #{@input.length - @input_idx}, #{@hunpos.length - @hun_idx}"
         else
           return true
-      end
+        end
 
       end
     end
@@ -98,6 +98,68 @@ class DisambiguationContext
       end
 
       raise ArgumentError, "Illegal dataspec"
+    end
+  end
+
+  def synchronize
+    input_s = current(:input).normalized_string
+    eval_s = current(:eval).first
+
+    input_len = Disambiguator.token_word_count(input_s)
+    eval_len = Disambiguator.token_word_count(eval_s)
+    
+    if input_s == eval_s
+      # This case is checked for in Disambiguator.disambiguate_word but is done again
+      # here to avoid throwing errors when a joined word is present both in input and eval.
+      return [current(:input)]
+    elsif input_len > 1 and eval_len > 1
+      # not possible, if both input and eval are joined they should be equal
+      # and caught above
+      raise RuntimeError
+    elsif input_len > 1
+      joined_eval = @eval[@eval_idx...(@eval_idx + input_len)].collect { |e| e.first }.join('_')
+      
+      if not (input_s == joined_eval or input_s == concat_eval)
+        raise RuntimeError
+      else
+        @eval_idx += input_len - 1
+        # hunpus is identical to input
+        return [current(:input)]
+      end
+    elsif eval_len > 1
+      joined_input = @input[@input_idx...(@input_idx + eval_len)].collect { |e| e.normalized_string}.join('_')
+      
+      if not (eval_s == joined_input or eval_s == concat_input)
+        raise RuntimeError
+      else
+        input = @input[@input_idx...(@input_idx + eval_len)]
+        @input_idx += eval_len -1
+        @hun_idx += eval_len - 1
+
+        return input
+      end
+    else
+      # some tokens will be connected with the next token in eval or input
+      # eg. Tir/Tir.
+
+      # TODO guard against array end here
+      input_next = input_s + @input[@input_idx + 1].normalized_string
+      eval_next = eval_s + @eval[@eval_idx + 1].first
+      
+      if input_next == eval_s
+        input = @input[@input_idx...(@input_idx + 2)]
+        @input_idx += 1
+        @hun_idx += 1
+
+        return input
+      elsif eval_next == input_s
+        @eval_idx += 1
+
+        return [current(:input)]
+
+      else
+        raise RuntimeError
+      end
     end
   end
 end

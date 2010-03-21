@@ -89,6 +89,12 @@ class Word
     return @tags.find_all { |t| t.correct }
   end
 
+  def get_correct_tag
+    raise RuntimeError if ambigious?
+
+    return @tags.first
+  end
+
   def correct_count
     return get_correct_tags.length
   end

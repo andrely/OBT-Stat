@@ -1,0 +1,23 @@
+"<reim>"
+	"reim" subst appell fem ub ent 
+	"reim" subst appell mask ub ent 
+"<og>"
+	"og" konj 
+"<tir.>"
+	"tir." subst appell mask fork 
+"<-->"
+	"$--" <strek> 
+"<tarmene>"
+	"tarm" subst appell mask be fl 
+"<mine>"
+	"min" det fl poss 
+"<hyler>"
+	"hyle" verb pres i1 
+"<som>"
+	"som" prep 
+"<sultne>"
+	"sulten" adj fl pos 
+"<ulver>"
+	"ulv" subst appell mask ub fl 
+"<.>"
+	"$." clb <punkt> 

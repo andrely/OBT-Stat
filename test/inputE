@@ -1,0 +1,66 @@
+"<det>"
+	"det" pron nøyt ent pers 3 
+"<gjenstår>"
+	"gjenstå" verb pres i2 
+"<i_hvert_fall>"
+	"i_hvert_fall" subst appell nøyt ub fl samset 
+"<én>"
+	"én" det mask ent kvant 
+"<hemmelighet>"
+	"hemmelighet" subst appell mask ub ent 
+"<det>"
+	"det" pron nøyt ent pers 3 
+"<er>"
+	"være" verb pres a5 pr1 pr2 <aux1/perf_part> 
+"<dimensjoner>"
+	"dimensjon" subst appell mask ub fl 
+"<over>"
+	"over" prep 
+"<:>"
+	"$:" clb <kolon> 
+
+"<en>"
+	"en" det mask ent kvant 
+"<viktig>"
+	"viktig" adj ub m/f ent pos 
+"<forutsetning>"
+	"forutsetning" subst appell mask ub ent 
+"<for>"
+	"for" prep 
+"<at>"
+	"at" sbu 
+"<det>"
+	"det" det dem nøyt ent 
+"<hele>"
+	"hel" adj be ent pos 
+"<skal>"
+	"skulle" verb pres <aux1/perf_part> <aux1/infinitiv> 
+"<gå>"
+	"gå" verb inf tr1 i1 i2 tr11 pa1 a3 pa4 pa2 pa5 pa2/til pr6 a15
+"<i>"
+	"i" prep 
+"<hop>"
+	"hop" subst appell mask ub ent samset 
+"<er>"
+	"være" verb pres a5 pr1 pr2 <aux1/perf_part> 
+"<at>"
+	"at" sbu 
+"<fedrene>"
+	"fedrene" adj ub m/f ent pos 
+	"fedrene" adj fl pos 
+	"fedrene" adj nøyt ub ent pos 
+	"fader" subst appell mask be fl 
+	"far" subst appell mask be fl 
+"<er>"
+	"være" verb pres a5 pr1 pr2 <aux1/perf_part> 
+"<seg>"
+	"seg" pron akk refl 
+"<sitt>"
+	"sin" det nøyt ent poss 
+"<ansvar>"
+	"ansvar" subst appell nøyt ub ent 
+"<bevisst>"
+	"bevisst" adj ub m/f ent pos 
+	"bevisst" adj nøyt ub ent pos 
+"<.>"
+	"$." clb <punkt> 

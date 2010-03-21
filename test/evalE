@@ -1,0 +1,32 @@
+det	pron_pers_3_ent_nøyt	det
+gjenstår	verb_pres	gjenstå
+i	prep	i
+hvert	adv	hvert			
+fall	subst_nøyt_ent_ub	fall
+én	det_kvant_mask_ent	én
+hemmelighet	subst_mask_appell_ent_ub	hemmelighet
+det	pron_pers_3_ent_nøyt	det
+er	verb_pres_<aux1/perf_part>	være
+dimensjoner	subst_mask_appell_fl_ub	dimensjon
+over	prep	over
+:	clb_<kolon>	$:
+
+en	det_kvant_mask_ent	en
+viktig	adj_pos_m/f_ub_ent	viktig
+forutsetning	subst_mask_appell_ent_ub	forutsetning
+for	prep	for
+at	sbu	at
+det	det_dem_nøyt_ent	det
+hele	adj_pos_be_ent	hel
+skal	verb_pres_<aux1/infinitiv>_<aux1/perf_part>	skulle
+gå	verb_inf	gå
+i_hop	adv	i hop
+er	verb_pres_<aux1/perf_part>	være
+at	sbu	at
+fedrene	subst_mask_appell_fl_be	far
+er	verb_pres_<aux1/perf_part>	være
+seg	pron_refl_ent_akk	seg
+sitt	det_poss_nøyt_ent	sin
+ansvar	subst_nøyt_appell_ent_ub	ansvar
+bevisst	adj_pos_m/f_ub_ent	bevisst
+.	clb_<PUNKT>	$.
