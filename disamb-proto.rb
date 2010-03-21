@@ -12,8 +12,8 @@ require "trace_logger"
 # Hunpos command and default model file
 # $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
-$hunpos_default_model = "./hunpos.model"
-
+# $hunpos_default_model = "./hunpos.model"
+$hunpos_default_model = "data/trening-u-flert-d.cor.hunpos_model"
 $default_lemma_model = "data/trening-u-flert-d.lemma_model"
 
 # Globally available instanes of the lemma model and trace logger
