@@ -38,6 +38,7 @@ class DisambiguationUnit
 
         if @eval
           @evaluator.mark_lemma lemma, @context
+          $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
         end
         
         return [@input.output_string, lemma, @hunpos[1]]
@@ -64,7 +65,11 @@ class DisambiguationUnit
         end
                 
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
-        
+
+        if @eval
+          $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
+        end
+            
         return [@input.output_string, tag.lemma, tag.clean_out_tag]
       end
     else
