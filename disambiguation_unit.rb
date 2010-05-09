@@ -59,14 +59,13 @@ class DisambiguationUnit
         tag = @input.tags.first if tag.nil?
 
         @evaluator.mark_ob_resolved
-        # do not count correct lemmas that was not available from OB
-        if @eval
-          @evaluator.mark_lemma(lemma, @context) if not tags.nil?
-        end
-                
+
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
 
         if @eval
+          @evaluator.mark_ob_correct if tag.clean_out_tag == @eval[1]
+          # do not count correct lemmas that was not available from OB
+          @evaluator.mark_lemma(lemma, @context) if not tags.nil?
           $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
         end
             

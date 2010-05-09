@@ -12,6 +12,7 @@ class Evaluator
     @collocation_unresolved_count = 0
     @unaligned_eval_count = 0
     @hunpos_correct_count = 0
+    @ob_correct_count = 0
     @lemma_correct_count = 0
     @lemma_hit_count = 0
     @lemma_lookup_count = 0
@@ -86,6 +87,10 @@ class Evaluator
     @hunpos_correct_count += 1
   end
 
+  def mark_ob_correct
+    @ob_correct_count += 1
+  end
+
   def mark_lemma(lemma, context)
     eval = context.current(:eval)[2]
 
@@ -127,7 +132,7 @@ class Evaluator
   def print_summary(out)
     info_message "Ambiguities: #{@ambiguity_count}"
     info_message "- Resolved by HunPos: #{@hunpos_correct_count}/#{@hunpos_resolved_count}"
-    info_message "- Resolved with random OB tag: #{@ob_resolved_count}"
+    info_message "- Resolved with random OB tag: #{@ob_correct_count}/#{@ob_resolved_count}"
     info_message "Correctly resolved lemmas: #{@lemma_correct_count}"
     info_message "Lemma model hit/use ratio: #{@lemma_hit_count}/#{@lemma_lookup_count}"
     info_message "Collocations: #{@collocation_unresolved_count}"
