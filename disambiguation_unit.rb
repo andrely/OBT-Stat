@@ -14,12 +14,14 @@ class DisambiguationUnit
 
   def resolve
     if @input.ambigious?
+      # Tracer output
       $tracer.message "Amibigious word \"#{@input.string}\" at #{@pos}}"
       @input.tags.each do |t|
         $tracer.message "OB: #{t.lemma} #{t.clean_out_tag}"
       end
       $tracer.message "HUNPOS: #{@hunpos[1]} (#{@hunpos[0]})"
-      
+
+      # Hunpos tag matches input
       if @input.match_clean_out_tag(@hunpos[1])
         # hunpos match
         @evaluator.mark_hunpos_resolved
@@ -28,10 +30,16 @@ class DisambiguationUnit
 
         # TODO better checking for evaluation
         if @eval # eval is nil if unaligned
-          @evaluator.mark_hunpos_correct if @hunpos[1] == @eval[1]
+          if @hunpos[1] == @eval[1]
+            @evaluator.mark_hunpos_correct
+          else
+            $tracer.message "HUNPOS CONFUSION #{@eval[1]} +++ #{@hunpos[1]}"
+          end
         end
-
-        candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
+        
+        # disambiguate lemma from tag/lemmas that correspond the disambiguated tag
+        # candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
+        candidates = @input.tags.find_all { |t| t.equal(@hunpos[1]) }
         lemmas = candidates.collect { |t| t.lemma }
 
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
@@ -45,7 +53,8 @@ class DisambiguationUnit
       else
         # no match, choose the word with the best lemma
 
-        candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
+        # candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
+        candidates = @input.tags.find_all { |t| t.equal(@hunpos[1]) }
         lemmas = candidates.collect { |t| t.lemma }
 
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
@@ -63,7 +72,13 @@ class DisambiguationUnit
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
 
         if @eval
-          @evaluator.mark_ob_correct if tag.clean_out_tag == @eval[1]
+          # if tag.clean_out_tag == @eval[1]
+          if tag.equal(@eval[1])
+            @evaluator.mark_ob_correct
+          else
+            $tracer.message "OB CONFUSION #{@eval[1]} +++ #{tag.clean_out_tag} ??? #{@hunpos[1]}"
+          end
+          
           # do not count correct lemmas that was not available from OB
           @evaluator.mark_lemma(lemma, @context) if not tags.nil?
           $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"

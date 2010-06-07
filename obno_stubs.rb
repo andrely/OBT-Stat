@@ -63,7 +63,8 @@ class Word
 
   def tag_by_string(str)
     @tags.each do |t|
-      return t if str == t.clean_out_tag
+      # return t if str == t.clean_out_tag
+      return t if t.equal(str)
     end
 
     return nil
@@ -78,7 +79,8 @@ class Word
   end
 
   def match_clean_out_tag(tag)
-    @tags.find { |t| t.clean_out_tag == tag }
+    # @tags.find { |t| t.clean_out_tag == tag }
+    @tags.find { |t| t.equal(tag) }
   end
 
   def word_count
@@ -122,5 +124,22 @@ class Tag
 
   def initialize
     @correct = nil
+  end
+
+  def equal(tag_str)
+    # assume we're passed a clean out style tag
+    elts = tag_str.split('_')
+    tag_elts = clean_out_tag.split('_')
+
+    return false if elts.count != tag_elts.count
+    
+    tag_elts.each do |e|
+      return nil if not elts.include? e
+    end
+
+    $tracer.message "EQUAL: #{clean_out_tag} - #{tag_str}"
+    
+    return true
+    # return clean_out_tag == tag_str
   end
 end
