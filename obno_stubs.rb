@@ -100,10 +100,21 @@ class Word
   def correct_count
     return get_correct_tags.length
   end
+  
+  # this must be expanded if sentence segmentation is made more complex
+  def capitalized?
+    if @sentence_index == 0
+      return true
+    elsif get_correct_tags.count > 0
+      return get_correct_tags.first.capitalized
+    else
+      return @tags.all? { |t| t.capitalized }
+    end
+  end
 end
 
 class Tag
-  attr_accessor :lemma, :string, :correct, :index
+  attr_accessor :lemma, :string, :correct, :capitalized, :index
 
   @@clean_tag_regex = Regexp.compile('((i|pa|tr|pr|r|rl|a|d|n)\d+(\/til)?)')
 
@@ -118,7 +129,7 @@ class Tag
     if tag.match('@')
       tag = tag.gsub(/^[\w\+]+\s(\w+)\s@.+$/, '\1')
     end
-    
+
     return tag.gsub(@@clean_tag_regex, '').strip.gsub(/\s+/, '_')
   end
 

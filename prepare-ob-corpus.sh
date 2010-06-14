@@ -22,7 +22,7 @@ echo "Creating held source file" ${held_source_file} >&2
 awk '{print $1}' ${held_file} > ${held_source_file}
 
 echo "Training HunPos model file" ${hunpos_model_file} >&2
-hunpos-1.0-macosx/hunpos-train ${hunpos_model_file} < ${train_file}
+cat  ${train_file} | iconv -f iso-8859-1 -t utf-8 | tr '[A-ZÆØÅ]' '[a-zæøå]' | iconv -f utf-8 -t iso-8859-1 | hunpos-1.0-macosx/hunpos-train ${hunpos_model_file}
 
 # convert source file to utf-8
 iconv -f iso-8859-1 -t utf-8 < ${held_source_file} > ${held_source_utf8_file}

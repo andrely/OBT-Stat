@@ -5,7 +5,7 @@ class OBNOText
   attr_accessor :test
 
   @word_regex = Regexp.compile('\"<(.*)>\"')
-  @tag_regex = Regexp.compile('^;?\s+\"(.*)\"\s+([^\!]*?)\s*(<Correct\!>)?\s*(SELECT\:\d+\s*)*$')
+  @tag_regex = Regexp.compile('^;?\s+\"(.*)\"\s+([^\!]*?)\s*(<\*>\s*)?(<\*\w+>)?(<Correct\!>)?\s*(SELECT\:\d+\s*)*$')
   @punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
   @orig_word_regex = Regexp.compile('^<word>(.*)</word>$')
 
@@ -69,10 +69,11 @@ class OBNOText
       # the tag list of the current word
       if isTagLine(line) then
         tag = Tag.new
-        lemma, string, correct = getTag(line)
+        lemma, string, correct, capitalized = getTag(line)
         tag.lemma = lemma.strip
         tag.string = string.strip
         tag.correct = correct
+        tag.capitalized = capitalized
         tag.index = tag_index
         tag_index += 1
         word.tags << tag
@@ -109,7 +110,7 @@ class OBNOText
 
   def self.getTag(line)
     if (m = line.match(@tag_regex)) then
-      return [m[1], m[2], !m[3].nil?]
+      return [m[1], m[2], !m[5].nil?, !m[3].nil?]
     end
 
     return nil

@@ -19,7 +19,7 @@ class Disambiguator
     File.open('temp', 'w') do |f|
       text.sentences.each do |s|
         s.words.each do |w|
-           f.puts w.normalized_string
+           f.puts w.normalized_string.downcase
         end
 
         f.puts
@@ -88,18 +88,18 @@ class Disambiguator
     hun = context.current(:hunpos)
     eval = context.current(:eval)
 
-    word_s = word.normalized_string
+    word_s = word.normalized_string.downcase
     hun_s = hun.first
     
     # if there is no eval corpus loaded eval is nil and we
     # substitute the current word for synchronization
     # checking
     if eval
-      eval_s = eval.first
+      eval_s = eval.first.downcase
     else
-      eval_s = word_s
+      eval_s = word_s.downcase
     end
-
+    
     if not (word_s == eval_s and word_s == hun_s)
       out_words = context.synchronize
 

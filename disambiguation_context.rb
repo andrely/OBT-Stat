@@ -102,8 +102,8 @@ class DisambiguationContext
   end
 
   def synchronize
-    input_s = current(:input).normalized_string
-    eval_s = current(:eval).first
+    input_s = current(:input).normalized_string.downcase
+    eval_s = current(:eval).first.downcase
 
     input_len = Disambiguator.token_word_count(input_s)
     eval_len = Disambiguator.token_word_count(eval_s)
