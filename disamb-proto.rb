@@ -13,7 +13,7 @@ require "trace_logger"
 # $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag"
 $hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
 # $hunpos_default_model = "./hunpos.model"
-$hunpos_default_model = "data/trening-u-flert-d.cor.hunpos_model"
+$hunpos_default_model = "data-case/trening-u-flert-d.cor.hunpos_model"
 $default_lemma_model = "data/trening-u-flert-d.lemma_model"
 
 # Globally available instanes of the lemma model and trace logger
@@ -52,7 +52,7 @@ if __FILE__ == $0
                         ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT],
                         ["--lemma-model", "-a", GetoptLong::REQUIRED_ARGUMENT],
                         ["--verbose", "-v", GetoptLong::NO_ARGUMENT],
-                        ["--log", "-l", GetoptLong::REQUIRED_ARGUMENT])
+                        ["--log", "-l", GetoptLong::OPTIONAL_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
@@ -67,7 +67,11 @@ if __FILE__ == $0
     when "--verbose":
         $verbose_output = true
     when "--log":
-        trace_file = arg.inspect.delete('"')
+        if arg == ""
+          # setup trace to stderr
+        else
+          trace_file = arg.inspect.delete('"')
+        end
     end
   end
   
