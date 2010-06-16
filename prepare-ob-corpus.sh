@@ -39,7 +39,7 @@ foni_ob_cmd="/usr/local/bin/vislcg3 -C latin1 --codepage-input utf-8 -g /hf/foni
 
 echo "Run mtag at foni"
 # run mtag at foni
-ssh ${foni_url} ${foni_mtag_cmd} < ${held_source_utf8_file} > ${held_mtag_file}
+cat ${held_source_utf8_file} | ruby vrt_to_line.rb | ssh ${foni_url} ${foni_mtag_cmd} > ${held_mtag_file}
 
 echo "Run OB at foni"
 # run OB at foni
