@@ -129,7 +129,12 @@ class Tag
     if tag.match('@')
       tag = tag.gsub(/^[\w\+]+\s(\w+)\s@.+$/, '\1')
     end
-
+    
+    # we treat clb marked punctuation the same as unmarked
+    if tag.match(/^clb /)
+      tag = tag.gsub(/^clb (.*)$/, '\1')
+    end
+    
     return tag.gsub(@@clean_tag_regex, '').strip.gsub(/\s+/, '_')
   end
 
