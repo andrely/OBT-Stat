@@ -18,6 +18,7 @@ class Evaluator
     @lemma_lookup_count = 0
 
     @lemma_error_map = { }
+    @print_lemma_map = false
     
     if evaluation_file
       @evaluation_data = read_eval_data
@@ -96,6 +97,11 @@ class Evaluator
 
     return if eval.nil? or lemma.nil?
 
+    # normalize before comparing
+    # TODO centralize normalizing
+    lemma = lemma.split.join('_').downcase
+    eval = eval.split.join('_').downcase
+    
     if lemma == eval
       @lemma_correct_count += 1
 
@@ -112,8 +118,9 @@ class Evaluator
       else
         data[lemma] = 1
       end
-      
     end
+
+    $tracer.message "LEMMA CONFUSION " + lemma + " +++ " + eval
   end
 
   def mark_unaligned_eval
@@ -138,11 +145,13 @@ class Evaluator
     info_message "Collocations: #{@collocation_unresolved_count}"
     info_message "Unaligned evaluation tokens: #{@unaligned_eval_count}"
 
-    @lemma_error_map.each do |k, v|
-      data = v.collect do |kk, vv|
-        "#{kk} #{vv}"
+    if @print_lemma_map
+      @lemma_error_map.each do |k, v|
+        data = v.collect do |kk, vv|
+          "#{kk} #{vv}"
+        end
+        info_message "#{k}\t#{data.join("\t")}"
       end
-      info_message "#{k}\t#{data.join("\t")}"
     end
   end
 end

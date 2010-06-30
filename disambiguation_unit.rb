@@ -41,8 +41,10 @@ class DisambiguationUnit
         # candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
         candidates = @input.tags.find_all { |t| t.equal(@hunpos[1]) }
         lemmas = candidates.collect { |t| t.lemma }
+        $tracer.message "LEMMA CANDIDATES " + lemmas.join(' ')
 
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
+        $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
 
         if @eval
           @evaluator.mark_lemma lemma, @context
@@ -52,12 +54,12 @@ class DisambiguationUnit
         return [@input.output_string, lemma, @hunpos[1]]
       else
         # no match, choose the word with the best lemma
-
-        # candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
-        candidates = @input.tags.find_all { |t| t.equal(@hunpos[1]) }
+        candidates = @input.tags.find_all { |t| t.lemma }
         lemmas = candidates.collect { |t| t.lemma }
-
+        $tracer.message "LEMMA CANDIDATES " + lemmas.join(' ')
+        
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
+        $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
 
         tags = @input.tags.find_all { |t| t.lemma == lemma }
 

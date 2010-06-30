@@ -119,7 +119,9 @@ class DisambiguationContext
     elsif input_len > 1
       joined_eval = @eval[@eval_idx...(@eval_idx + input_len)].collect { |e| e.first }.join('_')
       
-      if not (input_s == joined_eval or input_s == concat_eval)
+      # normalizing before comparing
+      # TODO centralize normalizing
+      if not (input_s.downcase == joined_eval.downcase)
         raise RuntimeError
       else
         @eval_idx += input_len - 1
@@ -128,8 +130,9 @@ class DisambiguationContext
       end
     elsif eval_len > 1
       joined_input = @input[@input_idx...(@input_idx + eval_len)].collect { |e| e.normalized_string}.join('_')
-      
-      if not (eval_s == joined_input or eval_s == concat_input)
+
+      # TODO centralize normalizing of input
+      if not (eval_s.downcase == joined_input.downcase)
         raise RuntimeError
       else
         input = @input[@input_idx...(@input_idx + eval_len)]
@@ -145,15 +148,19 @@ class DisambiguationContext
       # TODO guard against array end here
       input_next = input_s + @input[@input_idx + 1].normalized_string
       eval_next = eval_s + @eval[@eval_idx + 1].first
-      
-      if input_next == eval_s
+
+      if input_next.downcase == eval_s.downcase
         input = @input[@input_idx...(@input_idx + 2)]
         @input_idx += 1
         @hun_idx += 1
 
         return input
-      elsif eval_next == input_s
-        @eval_idx += 1
+
+      # TODO centralize normalization
+      elsif eval_next.downcase == input_s.downcase
+        if @input[@input_idx + 1].normalized_string !=  @eval[@eval_idx + 1][0]
+          @eval_idx += 1
+        end
 
         return [current(:input)]
 

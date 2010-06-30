@@ -5,12 +5,21 @@ class LemmaModel
   @@version_1_file_header = "version 1"
   @@lemma_data_sep = "^"
 
-  attr_reader :model
+  @@nowac_freq_file = 'NoWaC/nowac07_z10k-lemma-frq-noprop.lst'
+  @@nowac_full_freq_file = 'NoWaC/nowac.word.frq'
+
+  attr_reader :model, :unknown_model
   
   def initialize(evaluator = nil, file = @@default_file)
+    @lemma_backoff_disambiguation = :nowac # :prefix, :nowac or :nowac_full
     @model = {}
+    @unknown_model = {}
 
     @evaluator = evaluator
+    
+    if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
+      read_unknown_model
+    end
   end
   
   def model_entry(word)
@@ -36,13 +45,36 @@ class LemmaModel
     return top_result[0]
   end
 
+  def prefix_similarity(w1,w2)
+    len = [w1.length, w2.length].min
+    
+    len.times { |i| return i - 1 if w1[i] != w2[i] }
+
+    return len
+  end
+
   def disambiguate_lemma(word, lemma_list)
     word_lookup = @model[word]
 
     if word_lookup.nil?
-      @evaluator.mark_lemma_miss
+      if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
+        lemma_counts = lemma_list.collect { |lemma| [lemma, @unknown_model[lemma]] }
+      elsif @lemma_backoff_disambiguation == :prefix
+        lemma_counts = lemma_list.collect { |lemma| [lemma, prefix_similarity(word, lemma)] }
+      else
+        raise RuntimeError
+      end
       
-      return lemma_list.first
+
+      if lemma_counts.all? { |x| x[1].nil? }
+        @evaluator.mark_lemma_miss
+      
+        return lemma_list.first
+      else
+        lemma_counts = lemma_counts.find_all { |x| not x[1].nil? }
+        @evaluator.mark_lemma_hit
+        return lemma_counts.max { |a,b| a[1] <=> b[1] }.first
+      end
     end
 
     @evaluator.mark_lemma_hit
@@ -189,5 +221,27 @@ class LemmaModel
     end
 
     return @model
+  end
+
+  def read_unknown_model
+    File.open @@nowac_freq_file do |f|
+      f.each_line do |line|
+        vals = line.strip.split
+        word = vals[1]
+        if @lemma_backoff_disambiguation == :nowac
+          freq = vals[3].to_i
+        elsif @lemma_backoff_disambiguation == :nowac_full
+          freq = vals[0].to_i
+        else
+          raise RuntimeError
+        end
+        
+        if @unknown_model[word]
+          @unknown_model[word] += freq
+        else
+          @unknown_model[word] = freq
+        end
+      end
+    end
   end
 end
