@@ -44,9 +44,10 @@ class DisambiguationUnit
         $tracer.message "LEMMA CANDIDATES " + lemmas.join(' ')
 
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
-        $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
+        $tracer.message "LEMMA CHOSEN " + lemma
 
         if @eval
+          $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
           @evaluator.mark_lemma lemma, @context
           $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
         end
@@ -59,8 +60,11 @@ class DisambiguationUnit
         $tracer.message "LEMMA CANDIDATES " + lemmas.join(' ')
         
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
-        $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
-
+        $tracer.message "LEMMA CHOSEN " + lemma
+        if @eval
+          $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
+        end
+        
         tags = @input.tags.find_all { |t| t.lemma == lemma }
 
         # take the first tag with the correct lemma

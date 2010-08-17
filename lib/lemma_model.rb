@@ -1,4 +1,4 @@
-require 'evaluator'
+require 'lib/evaluator'
 
 class LemmaModel
   @@default_file = "data/trening-u-flert-d.train.cor"

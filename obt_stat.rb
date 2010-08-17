@@ -3,11 +3,11 @@
 require "open3"
 require "getoptlong"
 
-require "obno_stubs"
-require "obno_text"
-require "disambiguator"
-require "evaluator"
-require "trace_logger"
+require "lib/obno_stubs"
+require "lib/obno_text"
+require "lib/disambiguator"
+require "lib/evaluator"
+require "lib/trace_logger"
 
 # Hunpos command and default model file
 # $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag"

@@ -1,7 +1,7 @@
 require 'iconv'
-require 'disambiguation_context'
-require 'disambiguation_unit'
-require 'lemma_model'
+require 'lib/disambiguation_context'
+require 'lib/disambiguation_unit'
+require 'lib/lemma_model'
 
 class Disambiguator
   attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx,
