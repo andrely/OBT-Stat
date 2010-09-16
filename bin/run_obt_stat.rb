@@ -1,20 +1,16 @@
-#!/local/bin/ruby
+#!/usr/bin/env ruby
 
 require "open3"
 require "getoptlong"
+require "rbconfig"
 
-require "lib/obno_stubs"
-require "lib/obno_text"
-require "lib/disambiguator"
-require "lib/evaluator"
-require "lib/trace_logger"
-
-# Hunpos command and default model file
-# $hunpos_command = "/hf/foni/home/andrely/ob-disambiguation-prototype/hunpos-1.0-linux/hunpos-tag"
-$hunpos_command = "./hunpos-1.0-macosx/hunpos-tag"
-# $hunpos_default_model = "./hunpos.model"
-$hunpos_default_model = "data-case/trening-u-flert-d.cor.hunpos_model"
-$default_lemma_model = "data/trening-u-flert-d.lemma_model"
+# if we cannot require this file we're running locally and outside
+# the application directory. Try again with the absolute path
+begin
+  require "obt_stat"
+rescue LoadError:
+  require File.expand_path(File.dirname(__FILE__)) + "/obt_stat"
+end
 
 # Globally available instanes of the lemma model and trace logger
 $tracer = nil
@@ -23,10 +19,38 @@ $lemma_model = nil
 # set to true for progress info and evaluation output
 $verbose_output = nil
 
+$path = File.expand_path(File.dirname(__FILE__))
+
 # prints messages to $stderr if the verbose switch is set
 def info_message(msg, newline = true)
   $stderr.print msg if $verbose_output
   $stderr.puts if newline
+end
+
+def detect_platform
+  if Config::CONFIG['host_os'] =~ /mswin|mingw/
+    return :windows
+  end
+
+  if Config::CONFIG['host_os'] =~ /darwin/
+    return :osx
+  end
+
+  if Config::CONFIG['host_os'] =~ /linux/
+    return :linux
+  end
+
+  return :unknown
+end
+
+def get_hunpos_command
+  case detect_platform
+  when :osx:
+      return $path + "/../hunpos/hunpos-1.0-macosx/hunpos-tag"
+  when :linux:
+      return $path + "/../hunpos/hunpos-1.0-linux/hunpos-tag"
+  else raise RuntimeError
+  end
 end
 
 # sets up the evaluator and disambiguator, then runs the
@@ -41,7 +65,11 @@ def run_disambiguator(inputfile, evalfile)
   disambiguator.disambiguate
 end
 
-if __FILE__ == $0
+$hunpos_command = get_hunpos_command
+$hunpos_default_model = $path + "/../models/trening-u-flert-d.cor.hunpos_model"
+$default_lemma_model = $path + "/../models/trening-u-flert-d.lemma_model"
+
+if true #  __FILE__ == $0
   eval_file = nil
   input_file = nil
   trace_file = nil

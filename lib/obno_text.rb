@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-require 'lib/obno_stubs'
+# require 'lib/obno_stubs'
 
 class OBNOText
   attr_accessor :test

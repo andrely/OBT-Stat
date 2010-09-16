@@ -1,11 +1,11 @@
-require 'lib/evaluator'
+# require 'lib/evaluator'
 
 class LemmaModel
   @@default_file = "data/trening-u-flert-d.train.cor"
   @@version_1_file_header = "version 1"
   @@lemma_data_sep = "^"
 
-  @@nowac_freq_file = 'NoWaC/nowac07_z10k-lemma-frq-noprop.lst'
+  @@nowac_freq_file = File.expand_path(File.dirname(__FILE__)) + '/../models/nowac07_z10k-lemma-frq-noprop.lst'
   @@nowac_full_freq_file = 'NoWaC/nowac.word.frq'
 
   attr_reader :model, :unknown_model

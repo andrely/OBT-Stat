@@ -1,4 +1,4 @@
-require 'tracer'
+# require 'tracer'
 
 class DisambiguationUnit
   def initialize(input, eval, hunpos, evaluator, context)

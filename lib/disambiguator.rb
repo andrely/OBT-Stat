@@ -1,8 +1,3 @@
-require 'iconv'
-require 'lib/disambiguation_context'
-require 'lib/disambiguation_unit'
-require 'lib/lemma_model'
-
 class Disambiguator
   attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx,
     :text_idx, :input_file, :lemma_model
@@ -16,7 +11,7 @@ class Disambiguator
     
     hunpos_output = []
     
-    File.open('temp', 'w') do |f|
+    File.open('HUNPOS_TEMP', 'w') do |f|
       text.sentences.each do |s|
         s.words.each do |w|
            f.puts w.normalized_string.downcase
@@ -26,7 +21,7 @@ class Disambiguator
        end
     end
 
-    io = IO.popen("#{$hunpos_command} #{$hunpos_default_model} < temp", 'r+')
+    io = IO.popen("#{$hunpos_command} #{$hunpos_default_model} < HUNPOS_TEMP", 'r+')
     
     io.each_line do |line|
        line = line.chomp
