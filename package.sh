@@ -9,5 +9,7 @@ VERSION=0.9
 	obt_stat/models/trening-u-flert-d.lemma_model \
 	obt_stat/models/nowac07_z10k-lemma-frq-noprop.lst.utf8 \
   obt_stat/models/trening-u-flert-d.cor.hunpos_model.utf8 \
-	obt_stat/models/trening-u-flert-d.lemma_model.utf8)
+	obt_stat/models/trening-u-flert-d.lemma_model.utf8 \
+	obt_stat/LICENCE.txt \
+	obt_stat/gpl.txt )
 	
