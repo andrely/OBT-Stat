@@ -19,5 +19,5 @@ SPEC = Gem::Specification.new do |s|
   s.require_path = "lib"
   # s.require = "obt_stat"
   s.has_rdoc = false
-  s.extra_rdoc_files = ["README"]
+  s.extra_rdoc_files = ["LICENCE.txt", "gpl.txt"]
 end
