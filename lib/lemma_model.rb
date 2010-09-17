@@ -4,10 +4,7 @@ class LemmaModel
   @@default_file = "data/trening-u-flert-d.train.cor"
   @@version_1_file_header = "version 1"
   @@lemma_data_sep = "^"
-
-  @@nowac_freq_file = File.expand_path(File.dirname(__FILE__)) + '/../models/nowac07_z10k-lemma-frq-noprop.lst'
-  @@nowac_full_freq_file = 'NoWaC/nowac.word.frq'
-
+  
   attr_reader :model, :unknown_model
   
   def initialize(evaluator = nil, file = @@default_file)
@@ -238,7 +235,7 @@ class LemmaModel
   end
 
   def read_unknown_model
-    File.open @@nowac_freq_file do |f|
+    File.open $nowac_freq_file do |f|
       f.each_line do |line|
         vals = line.strip.split
         word = vals[1]

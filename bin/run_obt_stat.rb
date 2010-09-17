@@ -28,6 +28,10 @@ def info_message(msg, newline = true)
   $stderr.puts if newline
 end
 
+def print_help
+  puts "Help!"
+end
+
 def detect_platform
   if Config::CONFIG['host_os'] =~ /mswin|mingw/
     return :windows
@@ -67,8 +71,9 @@ def run_disambiguator(inputfile, evalfile)
 end
 
 $hunpos_command = get_hunpos_command
-$hunpos_default_model = $path + "/../models/trening-u-flert-d.cor.hunpos_model"
-$default_lemma_model = $path + "/../models/trening-u-flert-d.lemma_model"
+$hunpos_default_model = $path + "/../models/trening-u-flert-d.cor.hunpos_model.utf8"
+$default_lemma_model = $path + "/../models/trening-u-flert-d.lemma_model.utf8"
+$nowac_freq_file = $path + "/../models/nowac07_z10k-lemma-frq-noprop.lst.utf8"
 
 if true #  __FILE__ == $0
   eval_file = nil
@@ -82,7 +87,9 @@ if true #  __FILE__ == $0
                         ["--lemma-model", "-a", GetoptLong::REQUIRED_ARGUMENT],
                         ["--verbose", "-v", GetoptLong::NO_ARGUMENT],
                         ["--log", "-l", GetoptLong::OPTIONAL_ARGUMENT],
-                        ["--output", "-o", GetoptLong::REQUIRED_ARGUMENT])
+                        ["--output", "-o", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--format", "-f", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--help", "-h", GetoptLong::NO_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
@@ -107,7 +114,24 @@ if true #  __FILE__ == $0
           # default writer
         elsif arg == "vrt"
           $writer = VRTWriter.new
+        else
+          print_help
+          exit
         end
+    when "--format":
+        if arg == "utf8" or arg == "utf-8"
+          # default format
+        elsif arg == "latin1" or arg == "latin-1" or arg == "iso-8859-1"
+          $hunpos_default_model = $path + "/../models/trening-u-flert-d.cor.hunpos_model"
+          $default_lemma_model = $path + "/../models/trening-u-flert-d.lemma_model"
+          $nowac_freq_file = $path + "/../models/nowac07_z10k-lemma-frq-noprop.lst"
+        else
+          print_help
+          exit
+        end
+    when "--help":
+        print_help
+        exit
     end
   end
   
