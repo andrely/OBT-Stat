@@ -5,6 +5,10 @@
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
+#    Model data in the models directory is licensed solely for use with the
+#    OBT+Stat software. No other use is allowed without permission from the
+#    copyright holder.
+#
 #    This software is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
