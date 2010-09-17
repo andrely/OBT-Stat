@@ -103,9 +103,7 @@ class Disambiguator
 
         tag = w.get_correct_tag
 
-        w.preamble.each { |str| puts str } if w.preamble
-        puts w.input_string
-        puts tag.input_string
+        $writer.write(w, tag)
       end
     else
       unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context)
@@ -114,9 +112,7 @@ class Disambiguator
       w = output[0]
       tag = output[1]
 
-      w.preamble.each { |str| puts str } if w.preamble
-      puts w.input_string
-      puts tag.input_string
+      $writer.write(w, tag)
     end
         
     return true

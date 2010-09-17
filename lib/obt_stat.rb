@@ -1,5 +1,6 @@
 require "iconv"
 
+require "writers"
 require "obno_stubs"
 require "obno_text"
 require "lemma_model"

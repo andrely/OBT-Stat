@@ -4,7 +4,7 @@ require "iconv"
 
 path = File.expand_path(File.dirname(__FILE__))
 
-# require path + "/../lib/writers"
+require path + "/../lib/writers"
 require path + "/../lib/obno_stubs"
 require path + "/../lib/obno_text"
 require path + "/../lib/lemma_model"

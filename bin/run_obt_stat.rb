@@ -12,9 +12,10 @@ rescue LoadError:
   require File.expand_path(File.dirname(__FILE__)) + "/obt_stat"
 end
 
-# Globally available instanes of the lemma model and trace logger
+# Globally available instanes of the lemma model, writer and trace logger
 $tracer = nil
 $lemma_model = nil
+$writer = InputWriter.new
 
 # set to true for progress info and evaluation output
 $verbose_output = nil
@@ -80,7 +81,8 @@ if true #  __FILE__ == $0
                         ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT],
                         ["--lemma-model", "-a", GetoptLong::REQUIRED_ARGUMENT],
                         ["--verbose", "-v", GetoptLong::NO_ARGUMENT],
-                        ["--log", "-l", GetoptLong::OPTIONAL_ARGUMENT])
+                        ["--log", "-l", GetoptLong::OPTIONAL_ARGUMENT],
+                        ["--output", "-o", GetoptLong::REQUIRED_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
@@ -99,6 +101,12 @@ if true #  __FILE__ == $0
           # setup trace to stderr
         else
           trace_file = arg.inspect.delete('"')
+        end
+    when "--output":
+        if arg == "echo"
+          # default writer
+        elsif arg == "vrt"
+          $writer = VRTWriter.new
         end
     end
   end
