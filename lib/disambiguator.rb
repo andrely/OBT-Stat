@@ -103,14 +103,20 @@ class Disambiguator
 
         tag = w.get_correct_tag
 
-        puts "#{w.normalized_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
+        w.preamble.each { |str| puts str } if w.preamble
+        puts w.input_string
+        puts tag.input_string
       end
     else
       unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context)
       output = unit.resolve
-      
-      puts "#{output[0]}\t#{output[1]}\t#{output[2]}"
 
+      w = output[0]
+      tag = output[1]
+
+      w.preamble.each { |str| puts str } if w.preamble
+      puts w.input_string
+      puts tag.input_string
     end
         
     return true

@@ -40,19 +40,23 @@ class DisambiguationUnit
         # disambiguate lemma from tag/lemmas that correspond the disambiguated tag
         # candidates = @input.tags.find_all { |t| t.clean_out_tag == @hunpos[1] }
         candidates = @input.tags.find_all { |t| t.equal(@hunpos[1]) }
-        lemmas = candidates.collect { |t| t.lemma }
-        $tracer.message "LEMMA CANDIDATES " + lemmas.join(' ')
+        if candidates.count > 1
+          lemmas = candidates.collect { |t| t.lemma }
+          $tracer.message "LEMMA CANDIDATES " + lemmas.join(' ')
 
-        lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
-        $tracer.message "LEMMA CHOSEN " + lemma
+          lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
+          $tracer.message "LEMMA CHOSEN " + lemma
 
-        if @eval
-          $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
-          @evaluator.mark_lemma lemma, @context
-          $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
+          if @eval
+            $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
+            @evaluator.mark_lemma lemma, @context
+            $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
+          end
+
+          candidates = candidates.find_all { |t| t if t.lemma.downcase == lemma.downcase }
         end
         
-        return [@input.output_string, lemma, @hunpos[1]]
+        return [@input, candidates.first]
       else
         # no match, choose the word with the best lemma
         candidates = @input.tags.find_all { |t| t.lemma }
@@ -90,11 +94,12 @@ class DisambiguationUnit
           $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
         end
             
-        return [@input.output_string, tag.lemma, tag.clean_out_tag]
+        return [@input, tag]
       end
     else
       raise RuntimeError if @input.tags.length > 1
-      return [@input.output_string, @input.tags.first.lemma, @input.tags.first.clean_out_tag]
+
+      return [@input, @input.tags.first]
     end
   end
 end

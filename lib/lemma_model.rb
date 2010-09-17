@@ -54,9 +54,21 @@ class LemmaModel
   end
 
   def disambiguate_lemma(word, lemma_list)
+    $tracer.message "Disambiguating: " + word
+    $tracer.message "From " + lemma_list.join(' ')
+    
     word_lookup = @model[word]
 
-    if word_lookup.nil?
+    $tracer.message "Lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
+    
+    # filter incompatible lemmas
+    # TODO handle punctuation with prefixed $
+    word_lookup = word_lookup.find_all { |l| lemma_list.include? l.first } if not word_lookup.nil?
+
+    $tracer.message "Filtered lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
+    
+    if word_lookup.nil? or word_lookup.empty?
+      $tracer.message "Using backoff lemma model..."
       if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
         lemma_counts = lemma_list.collect { |lemma| [lemma, @unknown_model[lemma]] }
       elsif @lemma_backoff_disambiguation == :prefix
@@ -87,6 +99,8 @@ class LemmaModel
         best_lemma = k
       end
     end
+
+    $tracer.message "Found best lemma: " + best_lemma
 
     raise RuntimeError if best_lemma.nil?
     

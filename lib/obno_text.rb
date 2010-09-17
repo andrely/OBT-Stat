@@ -22,6 +22,7 @@ class OBNOText
     sent_count = 0
     index = 0
     tag_index = 0
+    preamble = []
 
     file.each_line do |line|
       # if there is an original word form, store it and put in the Word instance
@@ -34,11 +35,11 @@ class OBNOText
         end
         
         orig_word = GetOrigWordLine(line)
-      end
+        preamble << line
       
       # if we got a new OB word, create a new word, populate it with the parsed
       # data and push it on the sentence word list
-      if isWordLine(line) then
+      elsif isWordLine(line) then
         word = Word.new
         word.string = getWord(line).strip
 
@@ -46,12 +47,17 @@ class OBNOText
         word.orig_string = orig_word
         # erase the stored original word string to avoid it being inserted later
         orig_word = nil
+
+        word.preamble = preamble
+        preamble = []
         
         word.sentence_index = index
         word.tag_count = tag_index
         sentence.words << word
         index += 1
         tag_index = 0
+
+        word.input_string = line
         
         # if there is a sentence boundary, push the sentence on the texts sentence
         # list and create a new sentence instance.
@@ -63,11 +69,10 @@ class OBNOText
           index = 0
           sent_count += 1
         end
-      end
       
       # if we got a tag, parse it and populate a Tag instance that is pushed onto
       # the tag list of the current word
-      if isTagLine(line) then
+      elsif isTagLine(line) then
         tag = Tag.new
         lemma, string, correct, capitalized = getTag(line)
         tag.lemma = lemma.strip
@@ -77,6 +82,11 @@ class OBNOText
         tag.index = tag_index
         tag_index += 1
         word.tags << tag
+        tag.input_string = line
+        
+      # line with unknown data
+      else
+        preamble << line
       end
     end
     
@@ -87,6 +97,8 @@ class OBNOText
       text.sentences << sentence
       sent_count += 1
     end
+
+    text.postamble = preamble
     text.sentence_count = sent_count
 
     return text

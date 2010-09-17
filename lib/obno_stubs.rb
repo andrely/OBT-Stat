@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # stub ActiveRecord classes from tag-annotator
 class Text
-  attr_accessor :sentence_count, :sentences
+  attr_accessor :sentence_count, :sentences, :postamble
 
   def initialize
     @sentences = []
@@ -35,10 +35,11 @@ class Sentence
 end
 
 class Word
-  attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags
+  attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags, :input_string, :preamble
 
   def initialize
     @tags = []
+    @preamble = []
   end
 
   def normalized_string
@@ -114,7 +115,7 @@ class Word
 end
 
 class Tag
-  attr_accessor :lemma, :string, :correct, :capitalized, :index
+  attr_accessor :lemma, :string, :correct, :capitalized, :index, :input_string
 
   @@clean_tag_regex = Regexp.compile('((i|pa|tr|pr|r|rl|a|d|n)\d+(\/til)?)')
 
