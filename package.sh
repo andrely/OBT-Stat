@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=0.9
+VERSION=0.9.1
 (cd ..; tar zcvf obt_stat/obt-stat-${VERSION}.tgz \
   obt_stat/bin/*.rb \
   obt_stat/lib/*.rb obt_stat/hunpos/* \
