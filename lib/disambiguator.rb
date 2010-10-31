@@ -74,6 +74,8 @@ class Disambiguator
       disambiguate_word(context)
       context.advance
     end
+    
+    $writer.write_postamble(@text)
 
     @evaluator.print_summary($stderr)
   end

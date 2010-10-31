@@ -4,10 +4,18 @@ class InputWriter
     puts word.input_string
     puts tag.input_string
   end
+
+  def write_postamble(text)
+    puts text.postamble
+  end
 end
 
 class VRTWriter
   def write(word, tag)
     puts "#{word.normalized_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
+  end
+
+  def write_postamble()
+    # No postamble in VRT output
   end
 end
