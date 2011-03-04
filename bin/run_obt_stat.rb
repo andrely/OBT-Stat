@@ -8,7 +8,7 @@ require "rbconfig"
 # the application directory. Try again with the absolute path
 begin
   require "obt_stat"
-rescue LoadError:
+rescue LoadError
   require File.expand_path(File.dirname(__FILE__)) + "/obt_stat"
 end
 
@@ -50,9 +50,9 @@ end
 
 def get_hunpos_command
   case detect_platform
-  when :osx:
+  when :osx
       return $path + "/../hunpos/hunpos-1.0-macosx/hunpos-tag"
-  when :linux:
+  when :linux
       return $path + "/../hunpos/hunpos-1.0-linux/hunpos-tag"
   else raise RuntimeError
   end
@@ -93,23 +93,23 @@ if true #  __FILE__ == $0
 
   opts.each do |opt, arg|
     case opt
-    when "--eval":
+    when "--eval"
         eval_file = arg.inspect.delete('"')
-    when "--input":
+    when "--input"
         input_file = arg.inspect.delete('"')
-    when "--model":
+    when "--model"
         $hunpos_default_model = arg.inspect.delete('"')
-    when "--lemma-model":
+    when "--lemma-model"
         $default_lemma_model = arg.inspect.delete('"')
-    when "--verbose":
+    when "--verbose"
         $verbose_output = true
-    when "--log":
+    when "--log"
         if arg == ""
           # setup trace to stderr
         else
           trace_file = arg.inspect.delete('"')
         end
-    when "--output":
+    when "--output"
         if arg == "echo"
           # default writer
         elsif arg == "vrt"
@@ -118,7 +118,7 @@ if true #  __FILE__ == $0
           print_help
           exit
         end
-    when "--format":
+    when "--format"
         if arg == "utf8" or arg == "utf-8"
           # default format
         elsif arg == "latin1" or arg == "latin-1" or arg == "iso-8859-1"
@@ -129,7 +129,7 @@ if true #  __FILE__ == $0
           print_help
           exit
         end
-    when "--help":
+    when "--help"
         print_help
         exit
     end
