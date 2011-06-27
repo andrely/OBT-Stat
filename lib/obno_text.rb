@@ -4,7 +4,7 @@
 class OBNOText
   attr_accessor :test
 
-  @word_regex = Regexp.compile('\"<(.*)>\"')
+  @word_regex = Regexp.compile('^\s*\"<(.*)>\"\s*$')
   @tag_regex = Regexp.compile('^;?\s+\"(.*)\"\s+([^\!]*?)\s*(<\*>\s*)?(<\*\w+>)?(<Correct\!>)?\s*(SELECT\:\d+\s*)*$')
   @punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
   @orig_word_regex = Regexp.compile('^<word>(.*)</word>$')
