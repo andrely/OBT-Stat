@@ -3,7 +3,7 @@ require 'rubygems'
 
 SPEC = Gem::Specification.new do |s|
   s.name = "OBT+Stat"
-  s.version = "0.9.1"
+  s.version = "0.9.2-test"
   s.author = "André Lynum"
   s.email = "andrely@ifi.uio.no"
   s.platform = Gem::Platform::RUBY
