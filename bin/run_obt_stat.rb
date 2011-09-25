@@ -4,12 +4,19 @@ require "open3"
 require "getoptlong"
 require "rbconfig"
 
+$path = File.expand_path(File.dirname(__FILE__))
+
 # if we cannot require this file we're running locally and outside
 # the application directory. Try again with the absolute path
 begin
   require "obt_stat"
 rescue LoadError
-  require File.expand_path(File.dirname(__FILE__)) + "/obt_stat"
+  if File.split($path).last != "bin"
+    # called from root symlink
+    $path = $path + "/bin"
+  end
+
+  require $path + "/obt_stat"
 end
 
 # Globally available instanes of the lemma model, writer and trace logger
@@ -19,8 +26,6 @@ $writer = InputWriter.new
 
 # set to true for progress info and evaluation output
 $verbose_output = nil
-
-$path = File.expand_path(File.dirname(__FILE__))
 
 # prints messages to $stderr if the verbose switch is set
 def info_message(msg, newline = true)
