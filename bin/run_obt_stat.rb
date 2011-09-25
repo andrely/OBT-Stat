@@ -56,9 +56,12 @@ end
 def get_hunpos_command
   case detect_platform
   when :osx
-      return $path + "/../hunpos/hunpos-1.0-macosx/hunpos-tag"
+    return $path + "/../hunpos/hunpos-1.0-macosx/hunpos-tag"
   when :linux
-      return $path + "/../hunpos/hunpos-1.0-linux/hunpos-tag"
+    return $path + "/../hunpos/hunpos-1.0-linux/hunpos-tag"
+  when :windows
+    return $path + "/../hunpos/hunpos-1.0-win/hunpos-tag.exe"
+  
   else raise RuntimeError
   end
 end
