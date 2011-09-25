@@ -1,5 +1,7 @@
 class InputWriter
-  def write(word, tag)
+  def write(word)
+    tag = word.get_selected_tag
+    
     word.preamble.each { |str| puts str } if word.preamble
     puts word.input_string
     puts tag.input_string
@@ -11,11 +13,37 @@ class InputWriter
 end
 
 class VRTWriter
-  def write(word, tag)
-    puts "#{word.normalized_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
+  def write(word)
+    tag = word.get_selected_tag
+    puts "#{word.output_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
   end
 
-  def write_postamble()
+  def write_postamble(text)
     # No postamble in VRT output
+  end
+end
+
+class MarkWriter
+  def write(word)
+    word.preamble.each { |str| puts str } if word.preamble
+    puts word.input_string
+
+    word.tags.each do |tag|
+      $stdout.write tag.input_string.rstrip
+
+      if tag.selected
+        $stdout.write ' <SELECTED>'
+      end
+
+      if tag.selected and not tag.correct
+        $stdout.write ' <ERROR>'
+      end
+
+      puts
+    end
+  end
+
+  def write_postamble(text)
+    puts text.postamble
   end
 end
