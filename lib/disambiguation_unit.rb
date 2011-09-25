@@ -1,9 +1,6 @@
-# require 'tracer'
-
 class DisambiguationUnit
-  def initialize(input, eval, hunpos, evaluator, context)
+  def initialize(input, hunpos, evaluator, context)
     @input = input
-    @eval = eval
     @hunpos = hunpos
 
     @evaluator = evaluator
@@ -13,6 +10,8 @@ class DisambiguationUnit
   end
 
   def resolve
+    @evaluator.mark_word
+    
     if @input.ambigious?
       # Tracer output
       $tracer.message "Amibigious word \"#{@input.string}\" at #{@pos}}"
@@ -26,14 +25,13 @@ class DisambiguationUnit
         # hunpos match
         @evaluator.mark_hunpos_resolved
         
-        $tracer.message "SELECTED HUNPOS #{@eval[1] if @eval} #{@hunpos[1]}"
+        $tracer.message "SELECTED HUNPOS #{@hunpos[1]}"
 
-        # TODO better checking for evaluation
-        if @eval # eval is nil if unaligned
-          if @hunpos[1] == @eval[1]
+        if @evaluator.active
+          # add eval of hunpos/correct
+          correct_tag = @input.get_correct_tag
+          if correct_tag and (correct_tag.clean_out_tag == @hunpos[1])
             @evaluator.mark_hunpos_correct
-          else
-            $tracer.message "HUNPOS CONFUSION #{@eval[1]} +++ #{@hunpos[1]}"
           end
         end
         
@@ -47,16 +45,23 @@ class DisambiguationUnit
           lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
           $tracer.message "LEMMA CHOSEN " + lemma
 
-          if @eval
-            $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
-            @evaluator.mark_lemma lemma, @context
-            $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
+          if @evaluator.active
+            # add eval of lemma here
+            $tracer.message "LEMMA CHOSEN " + lemma
+
+            correct_tag = @input.get_correct_tag
+            if correct_tag and (correct_tag.lemma.downcase == lemma.downcase)
+              @evaluator.mark_lemma_correct
+            end
           end
 
           candidates = candidates.find_all { |t| t if t.lemma.downcase == lemma.downcase }
         end
-        
-        return [@input, candidates.first]
+
+        candidates.first.selected = true
+        # puts 'ARBITRARY SELECTION' if candidates.count > 1
+
+        return @input
       else
         # no match, choose the word with the best lemma
         candidates = @input.tags.find_all { |t| t.lemma }
@@ -65,8 +70,12 @@ class DisambiguationUnit
         
         lemma = $lemma_model.disambiguate_lemma(@input.string, lemmas)
         $tracer.message "LEMMA CHOSEN " + lemma
-        if @eval
-          $tracer.message "LEMMA CHOSEN " + lemma + " CORRECT " + @context.current(:eval)[2]
+        if @evaluator.active
+          # add eval of lemma here
+          correct_tag = @input.get_correct_tag
+          if correct_tag and (correct_tag.lemma.downcase == lemma.downcase)
+            @evaluator.mark_lemma_correct
+          end
         end
         
         tags = @input.tags.find_all { |t| t.lemma == lemma }
@@ -76,30 +85,29 @@ class DisambiguationUnit
         # or the first of all OB tags if none with the chosen lemma
         # is available
         tag = @input.tags.first if tag.nil?
+        # puts 'ARBITRARY SELECTION' if tag.nil?
+
+        tag.selected = true
 
         @evaluator.mark_ob_resolved
 
         $tracer.message "SELECTED OB #{tag.lemma} #{tag.clean_out_tag}"
 
-        if @eval
-          # if tag.clean_out_tag == @eval[1]
-          if tag.equal(@eval[1])
+        if @evaluator.active
+          # add eval for tag/ob
+          if correct_tag and (correct_tag.clean_out_tag == tag.clean_out_tag)
             @evaluator.mark_ob_correct
-          else
-            $tracer.message "OB CONFUSION #{@eval[1]} +++ #{tag.clean_out_tag} ??? #{@hunpos[1]}"
           end
-          
-          # do not count correct lemmas that was not available from OB
-          @evaluator.mark_lemma(lemma, @context) if not tags.nil?
-          $tracer.message "CORRECT #{@evaluator.get_data(@context.eval_idx).join("\t")}"
         end
             
-        return [@input, tag]
+        return @input
       end
     else
       raise RuntimeError if @input.tags.length > 1
 
-      return [@input, @input.tags.first]
+      @input.tags.first.selected = true
+
+      return @input
     end
   end
 end

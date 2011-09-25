@@ -36,7 +36,9 @@ end
 
 class Word
   attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags, :input_string, :preamble
-
+  
+  @@punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
+  
   def initialize
     @tags = []
     @preamble = []
@@ -93,9 +95,25 @@ class Word
   end
 
   def get_correct_tag
+    correct_tags = get_correct_tags
+    raise RuntimeError if correct_tags.count > 1
+
+    return correct_tags.first
+  end
+
+  def get_selected_tag
     raise RuntimeError if ambigious?
 
     return @tags.first
+  end
+
+  def get_selected_tag
+    selected = @tags.find_all { |t| t.selected }
+
+    raise RuntimeError if selected.length > 1
+    
+    # nil implicitly returned if no tag is selected
+    return selected.first
   end
 
   def correct_count
@@ -112,10 +130,28 @@ class Word
       return @tags.all? { |t| t.capitalized }
     end
   end
+
+  def is_punctuation?
+    return @string.match(@@punctuation_regex)
+  end
+  
+  def remove_duplicate_clean_tags!
+    seen = []
+
+    @tags.each do |tag|
+      if seen.member?([tag.clean_out_tag, tag.lemma])
+        @tags.delete(tag)
+      else
+        seen << [tag.clean_out_tag, tag.lemma]
+      end
+    end
+
+    return @tags
+  end
 end
 
 class Tag
-  attr_accessor :lemma, :string, :correct, :capitalized, :index, :input_string
+  attr_accessor :lemma, :string, :correct, :selected, :capitalized, :index, :input_string
 
   @@clean_tag_regex = Regexp.compile('((i|pa|tr|pr|r|rl|a|d|n)\d+(\/til)?)')
 

@@ -67,8 +67,6 @@ class Disambiguator
     # store all data in context
     context.input = @text.words
     context.hunpos = @hunpos_output
-    context.eval = @evaluator.evaluation_data
-    context.eval_active = @evaluator.active
     
     while not context.at_end?
       disambiguate_word(context)
@@ -83,38 +81,45 @@ class Disambiguator
   def disambiguate_word(context)
     word = context.current(:input)
     hun = context.current(:hunpos)
-    eval = context.current(:eval)
 
     word_s = word.normalized_string.downcase
     hun_s = hun.first
     
-    # if there is no eval corpus loaded eval is nil and we
-    # substitute the current word for synchronization
-    # checking
-    if eval
-      eval_s = eval.first.downcase
-    else
-      eval_s = word_s.downcase
-    end
-    
-    if not (word_s == eval_s and word_s == hun_s)
+    if not word_s == hun_s
       out_words = context.synchronize
 
       out_words.each do |w|
         raise RuntimeError if w.ambigious?
 
-        tag = w.get_correct_tag
-
-        $writer.write(w, tag)
+        $writer.write(w)
       end
     else
-      unit = DisambiguationUnit.new(word, eval, hun, @evaluator, context)
-      output = unit.resolve
+      unit = DisambiguationUnit.new(word, hun, @evaluator, context)
+      word = unit.resolve
+      
+      if @evaluator.active
+        correct_tag = word.get_correct_tag
+        
+        if word.get_selected_tag.correct
+          @evaluator.mark_global_correct
+        end
+        
+        if correct_tag
+          if word.get_selected_tag.clean_out_tag.downcase == correct_tag.clean_out_tag.downcase
+            @evaluator.mark_global_correct_tag
+          # else
+          #  puts "ERROR #{word.get_selected_tag.clean_out_tag} +++ #{correct_tag.clean_out_tag}"
+          end
+          
+          if word.get_selected_tag.lemma.downcase == word.get_correct_tag.lemma.downcase
+            @evaluator.mark_global_correct_lemma
+          end
+        else
+          @evaluator.mark_ob_non_coverage
+        end
+      end
 
-      w = output[0]
-      tag = output[1]
-
-      $writer.write(w, tag)
+      $writer.write(word)
     end
         
     return true

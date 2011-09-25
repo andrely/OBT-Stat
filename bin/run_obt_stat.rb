@@ -27,6 +27,8 @@ $writer = InputWriter.new
 # set to true for progress info and evaluation output
 $verbose_output = nil
 
+$eval_output = nil
+
 # prints messages to $stderr if the verbose switch is set
 def info_message(msg, newline = true)
   $stderr.print msg if $verbose_output
@@ -68,8 +70,8 @@ end
 
 # sets up the evaluator and disambiguator, then runs the
 # disambiguator
-def run_disambiguator(inputfile, evalfile)
-  evaluator = Evaluator.new(evalfile)
+def run_disambiguator(inputfile)
+  evaluator = Evaluator.new $eval_output
 
   disambiguator = Disambiguator.new(evaluator)
 
@@ -84,12 +86,11 @@ $default_lemma_model = $path + "/../models/trening-u-flert-d.lemma_model.utf8"
 $nowac_freq_file = $path + "/../models/nowac07_z10k-lemma-frq-noprop.lst.utf8"
 
 if true #  __FILE__ == $0
-  eval_file = nil
   input_file = nil
   trace_file = nil
 
   # parse options
-  opts = GetoptLong.new(["--eval", "-e", GetoptLong::REQUIRED_ARGUMENT],
+  opts = GetoptLong.new(["--eval", "-e", GetoptLong::NO_ARGUMENT],
                         ["--input", "-i", GetoptLong::REQUIRED_ARGUMENT],
                         ["--model", "-m", GetoptLong::REQUIRED_ARGUMENT],
                         ["--lemma-model", "-a", GetoptLong::REQUIRED_ARGUMENT],
@@ -102,7 +103,7 @@ if true #  __FILE__ == $0
   opts.each do |opt, arg|
     case opt
     when "--eval"
-        eval_file = arg.inspect.delete('"')
+        $eval_output = true
     when "--input"
         input_file = arg.inspect.delete('"')
     when "--model"
@@ -122,6 +123,8 @@ if true #  __FILE__ == $0
           # default writer
         elsif arg == "vrt"
           $writer = VRTWriter.new
+        elsif arg == "mark"
+          $writer = MarkWriter.new
         else
           print_help
           exit
@@ -151,7 +154,7 @@ if true #  __FILE__ == $0
   end
   
   # do the disambiguation
-  run_disambiguator(input_file, eval_file)
+  run_disambiguator(input_file)
   
   # stop the tracer
   $tracer.shutdown
