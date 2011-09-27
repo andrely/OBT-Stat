@@ -10,8 +10,9 @@ class Disambiguator
     info_message($hunpos_command + " " + $hunpos_default_model)
     
     hunpos_output = []
-    
-    File.open('HUNPOS_TEMP', 'w') do |f|
+
+    # open in binary to ensure unix line terminators on windows
+    File.open('HUNPOS_TEMP', 'wb') do |f|
       text.sentences.each do |s|
         s.words.each do |w|
            f.puts w.normalized_string.downcase
