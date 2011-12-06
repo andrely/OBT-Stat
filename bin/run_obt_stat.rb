@@ -40,7 +40,7 @@ def print_help
 end
 
 def detect_platform
-  if Config::CONFIG['host_os'] =~ /mswin|mingw/
+  if Config::CONFIG['host_os'] =~ /mswin|mingw|win32|cygwin/
     return :windows
   end
 
