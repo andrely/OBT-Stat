@@ -9,13 +9,15 @@ class OBNOTextIterator
   @peeked_preamble = nil
   @postamble
   
-  def initialize(file)
+  def initialize(file, use_static_punctuation = false)
     @file = file
 
     @word_regex = Regexp.compile('\"<(.*)>\"')
     @tag_regex = Regexp.compile('^;?\s+\"(.*)\"\s+([^\!]*?)\s*(<\*>\s*)?(<\*\w+>)?(<Correct\!>)?\s*(SELECT\:\d+\s*)*$')
     @punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
     @orig_word_regex = Regexp.compile('^<word>(.*)</word>$')
+
+    @use_static_punctuation = use_static_punctuation
   end
 
   def each_sentence
@@ -35,7 +37,8 @@ class OBNOTextIterator
       while word = get_next_word(f)
         sentence.words << word
         
-        break if word.is_punctuation?
+        break if word.is_punctuation? and @use_static_punctuation
+        break if word.end_of_sentence_p and not @use_static_punctuation
       end
     rescue EOFError
       if @peeked_word_record or @peeked_orig_word_record
@@ -54,20 +57,20 @@ class OBNOTextIterator
     word = Word.new
     word.string, word.orig_string, word.preamble = get_word_header(f)
 
-    word.tags = get_word_tags(f)
+    word.tags = get_word_tags(f, word)
 
     raise RuntimeError if word.tags.empty?
 
     return word
   end
 
-  def get_word_tags(f)
+  def get_word_tags(f, word)
     tags = []
     
     while line = f.readline
       if is_tag_line(line)
         tag = Tag.new
-        tag.lemma, tag.string, tag.correct, tag.capitalized = get_tag(line)
+        tag.lemma, tag.string, tag.correct, tag.capitalized, word.end_of_sentence_p = get_tag(line)
         tags << tag
       else
         peek line
@@ -139,9 +142,21 @@ class OBNOTextIterator
     line.match(@tag_regex)
   end
 
-  def get_tag(line)
+    def self.getTag(line)
     if (m = line.match(@tag_regex)) then
-      return [m[1], m[2], !m[5].nil?, !m[3].nil?]
+      lemma = m[1]
+      tag = m[2]
+      correct = !m[5].nil?
+      capitalized = !m[3].nil?
+      end_of_sentence = nil
+
+      # detect end of sentence marker and remove it
+      if tag.match("\s+<<<\s+")
+        tag = tag.gsub(/\s+<<<\s+/, " ")
+        end_of_sentence = true
+      end
+      
+      return [lemma, tag, correct, capitalized, end_of_sentence]
     end
 
     return nil
@@ -177,7 +192,7 @@ class OBNOText
   # with the result.
   # file - A File instance to read input from
   # returns true
-  def self.parse(file, use_static_punctuation = true)
+  def self.parse(file, use_static_punctuation = false)
     text = Text.new
     
     word = nil
@@ -227,19 +242,13 @@ class OBNOText
         # list and create a new sentence instance.
         if isPunctuation(word.string) and use_static_punctuation then
           word.end_of_sentence_p = true
-          sentence.length = index
-          sentence.text_index = sent_count
-          text.sentences << sentence
-          sentence = Sentence.new
-          index = 0
-          sent_count += 1
-        end
+         end
       
       # if we got a tag, parse it and populate a Tag instance that is pushed onto
       # the tag list of the current word
       elsif isTagLine(line) then
         tag = Tag.new
-        lemma, string, correct, capitalized = getTag(line)
+        lemma, string, correct, capitalized, end_of_sentence = getTag(line)
         tag.lemma = lemma.strip
         tag.string = string.strip
         tag.correct = correct
@@ -248,10 +257,23 @@ class OBNOText
         tag_index += 1
         word.tags << tag
         tag.input_string = line
+
+        if end_of_sentence and not use_static_punctuation then
+          word.end_of_sentence_p = true
+        end
         
       # line with unknown data
       else
         preamble << line
+      end
+
+      if word and word.end_of_sentence_p then
+        sentence.length = index
+        sentence.text_index = sent_count
+        text.sentences << sentence
+        sentence = Sentence.new
+        index = 0
+        sent_count += 1
       end
     end
     
@@ -287,7 +309,19 @@ class OBNOText
 
   def self.getTag(line)
     if (m = line.match(@tag_regex)) then
-      return [m[1], m[2], !m[5].nil?, !m[3].nil?]
+      lemma = m[1]
+      tag = m[2]
+      correct = !m[5].nil?
+      capitalized = !m[3].nil?
+      end_of_sentence = nil
+
+      # detect end of sentence marker and remove it
+      if tag.match("\s+<<<\s+")
+        tag = tag.gsub(/\s+<<<\s+/, " ")
+        end_of_sentence = true
+      end
+      
+      return [lemma, tag, correct, capitalized, end_of_sentence]
     end
 
     return nil

@@ -52,7 +52,7 @@ class Disambiguator
     # get input
     @text = nil
     if @input_file.nil?
-      @text = OBNOText.parse $stdin
+      @text = OBNOText.parse($stdin, $static_punctuation)
     else
       File.open(@input_file) do |f|
         @text = OBNOText.parse f

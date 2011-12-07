@@ -29,6 +29,8 @@ $verbose_output = nil
 
 $eval_output = nil
 
+$static_punctuation = nil
+
 # prints messages to $stderr if the verbose switch is set
 def info_message(msg, newline = true)
   $stderr.print msg if $verbose_output
@@ -98,7 +100,8 @@ if true #  __FILE__ == $0
                         ["--log", "-l", GetoptLong::OPTIONAL_ARGUMENT],
                         ["--output", "-o", GetoptLong::REQUIRED_ARGUMENT],
                         ["--format", "-f", GetoptLong::REQUIRED_ARGUMENT],
-                        ["--help", "-h", GetoptLong::NO_ARGUMENT])
+                        ["--help", "-h", GetoptLong::NO_ARGUMENT],
+                        ["--static-punctuation", "-s", GetoptLong::NO_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
@@ -140,6 +143,8 @@ if true #  __FILE__ == $0
           print_help
           exit
         end
+    when "--static-punctuation"
+      $static_punctuation = true
     when "--help"
         print_help
         exit
