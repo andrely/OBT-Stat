@@ -35,13 +35,14 @@ class Sentence
 end
 
 class Word
-  attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags, :input_string, :preamble
+  attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags, :input_string, :preamble, :end_of_sentence_p
   
   @@punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
   
   def initialize
     @tags = []
     @preamble = []
+    @end_of_sentence_p = nil
   end
 
   def normalized_string
@@ -147,6 +148,10 @@ class Word
     end
 
     return @tags
+  end
+
+  def end_of_sentence?
+    return @end_of_sentence_p
   end
 end
 

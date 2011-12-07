@@ -10,6 +10,9 @@ class InputWriter
   def write_postamble(text)
     puts text.postamble
   end
+
+  def write_sentence_delimiter(word)
+  end
 end
 
 class VRTWriter
@@ -20,6 +23,11 @@ class VRTWriter
 
   def write_postamble(text)
     # No postamble in VRT output
+  end
+
+  # empty line separates sentences
+  def write_sentence_delimiter(word)
+    puts
   end
 end
 
@@ -45,5 +53,8 @@ class MarkWriter
 
   def write_postamble(text)
     puts text.postamble
+  end
+
+  def write_sentence_delimiter(word)
   end
 end

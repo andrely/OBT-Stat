@@ -168,8 +168,6 @@ class OBNOTextIterator
 end
 
 class OBNOText
-  attr_accessor :test
-
   @word_regex = Regexp.compile('^\s*\"<(.*)>\"\s*$')
   @tag_regex = Regexp.compile('^;?\s+\"(.*)\"\s+([^\!]*?)\s*(<\*>\s*)?(<\*\w+>)?(<Correct\!>)?\s*(SELECT\:\d+\s*)*$')
   @punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
@@ -179,7 +177,7 @@ class OBNOText
   # with the result.
   # file - A File instance to read input from
   # returns true
-  def self.parse(file)
+  def self.parse(file, use_static_punctuation = true)
     text = Text.new
     
     word = nil
@@ -227,7 +225,8 @@ class OBNOText
         
         # if there is a sentence boundary, push the sentence on the texts sentence
         # list and create a new sentence instance.
-        if isPunctuation(word.string) then
+        if isPunctuation(word.string) and use_static_punctuation then
+          word.end_of_sentence_p = true
           sentence.length = index
           sentence.text_index = sent_count
           text.sentences << sentence

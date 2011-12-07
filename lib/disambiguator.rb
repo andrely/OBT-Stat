@@ -111,13 +111,13 @@ class Disambiguator
         end
         
         if correct_tag
-          if word.get_selected_tag.clean_out_tag.downcase == correct_tag.clean_out_tag.downcase
+          if word.get_selected_tag.clean_out_tag.downcase ==
+              correct_tag.clean_out_tag.downcase
             @evaluator.mark_global_correct_tag
-          # else
-          #  puts "ERROR #{word.get_selected_tag.clean_out_tag} +++ #{correct_tag.clean_out_tag}"
           end
           
-          if word.get_selected_tag.lemma.downcase == word.get_correct_tag.lemma.downcase
+          if word.get_selected_tag.lemma.downcase ==
+              word.get_correct_tag.lemma.downcase
             @evaluator.mark_global_correct_lemma
           end
         else
@@ -126,6 +126,10 @@ class Disambiguator
       end
 
       $writer.write(word)
+
+      if word.end_of_sentence?
+        $writer.write_sentence_delimiter(word)
+      end
     end
         
     return true
