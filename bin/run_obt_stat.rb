@@ -73,9 +73,7 @@ end
 # sets up the evaluator and disambiguator, then runs the
 # disambiguator
 def run_disambiguator(inputfile)
-  evaluator = Evaluator.new $eval_output
-
-  disambiguator = Disambiguator.new(evaluator)
+  disambiguator = Disambiguator.new
 
   disambiguator.input_file = inputfile
 

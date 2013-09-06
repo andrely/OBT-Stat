@@ -1,5 +1,3 @@
-# require 'lib/evaluator'
-
 class LemmaModel
   @@default_file = "data/trening-u-flert-d.train.cor"
   @@version_1_file_header = "version 1"
@@ -7,13 +5,11 @@ class LemmaModel
   
   attr_reader :model, :unknown_model
   
-  def initialize(evaluator = nil, file = @@default_file)
+  def initialize(file = @@default_file)
     @lemma_backoff_disambiguation = :nowac # :prefix, :nowac or :nowac_full
     @model = {}
     @unknown_model = {}
 
-    @evaluator = evaluator
-    
     if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
       read_unknown_model
     end
@@ -76,18 +72,13 @@ class LemmaModel
       
 
       if lemma_counts.all? { |x| x[1].nil? }
-        @evaluator.mark_lemma_miss
-      
         return lemma_list.first
       else
         lemma_counts = lemma_counts.find_all { |x| not x[1].nil? }
-        @evaluator.mark_lemma_hit
         return lemma_counts.max { |a,b| a[1] <=> b[1] }.first
       end
     end
 
-    @evaluator.mark_lemma_hit
-    
     best_score = 0
     best_lemma = nil
     

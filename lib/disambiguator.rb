@@ -6,9 +6,8 @@ class Disambiguator
 
   ##
   # @param [Writer] writer
-  def initialize(evaluator, writer=$default_writer)
+  def initialize(writer=$default_writer)
     @writer = writer
-    @evaluator = evaluator
   end
 
   def self.run_hunpos(text)
@@ -69,7 +68,7 @@ class Disambiguator
 
     # build lemma model
     info_message "Building lemma model"
-    $lemma_model = LemmaModel.new(@evaluator)
+    $lemma_model = LemmaModel.new
     $lemma_model.read_lemma_model $default_lemma_model
     info_message "Finished building lemma model"
 
@@ -83,8 +82,6 @@ class Disambiguator
     end
 
     @writer.write_postamble(@text)
-
-    @evaluator.print_summary($stderr)
   end
 
   def disambiguate_word(context)
@@ -103,30 +100,8 @@ class Disambiguator
         @writer.write(w)
       end
     else
-      unit = DisambiguationUnit.new(word, hun, @evaluator, context)
+      unit = DisambiguationUnit.new(word, hun, context)
       word = unit.resolve
-
-      if @evaluator.active
-        correct_tag = word.get_correct_tag
-
-        if word.get_selected_tag.correct
-          @evaluator.mark_global_correct
-        end
-
-        if correct_tag
-          if word.get_selected_tag.clean_out_tag.downcase ==
-              correct_tag.clean_out_tag.downcase
-            @evaluator.mark_global_correct_tag
-          end
-
-          if word.get_selected_tag.lemma.downcase ==
-              word.get_correct_tag.lemma.downcase
-            @evaluator.mark_global_correct_lemma
-          end
-        else
-          @evaluator.mark_ob_non_coverage
-        end
-      end
 
       @writer.write(word)
 
