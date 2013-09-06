@@ -1,10 +1,41 @@
-class InputWriter
+##
+# @abstract Subclass and override {#write}, {#write_postamble} and #{write_sentence_delimiter} to implement an output
+#   formatting class that can be passed to Disambiguator.
+class Writer
   ##
   # @param [IO, StringIO] file IO instance to which output is written.
   def initialize(file=$stdout)
     @file = file
   end
 
+  ##
+  # Format and output the given word, its annotation and preamble text if needed.
+  #
+  # @param [Word] word
+  def write(word)
+    raise NotImplementedError
+  end
+
+  ##
+  # Format and output postamble text after annotated text if needed.
+  #
+  # @param [Text] text
+  # @todo Doesn't need to use the word for current supported formats. Some formats (treetagger) do, but then
+  #   Disambiguator needs to call the Writer interface differently eg. in Disambiguator.disambiguate_word.
+  def write_postamble(text)
+    raise NotImplementedError
+  end
+
+  ##
+  # Format and output a sentence delimiter if needed.
+  #
+  # @param [Word] word The last Word instance written.
+  def write_sentence_delimiter(word)
+    raise NotImplementedError
+  end
+end
+
+class InputWriter < Writer
   def write(word)
     tag = word.get_selected_tag
 
@@ -22,13 +53,7 @@ class InputWriter
   end
 end
 
-class VRTWriter
-  ##
-  # @param [IO, StringIO] file IO instance to which output is written.
-  def initialize(file=$stdout)
-    @file = file
-  end
-
+class VRTWriter < Writer
   def write(word)
     tag = word.get_selected_tag
     @file.puts "#{word.output_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
@@ -46,13 +71,7 @@ class VRTWriter
   end
 end
 
-class MarkWriter
-  ##
-  # @param [IO, StringIO] file IO instance to which output is written.
-  def initialize(file=$stdout)
-    @file = file
-  end
-
+class MarkWriter < Writer
   def write(word)
     word.preamble.each { |str| @file.puts str } if word.preamble
     @file.puts word.input_string
@@ -73,7 +92,7 @@ class MarkWriter
   end
 
   def write_postamble(text)
-    puts text.postamble
+    @file.puts text.postamble
   end
 
   #noinspection RubyUnusedLocalVariable
