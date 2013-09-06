@@ -103,18 +103,12 @@ class Word
   end
 
   def get_selected_tag
-    raise RuntimeError if ambigious?
-
-    return @tags.first
-  end
-
-  def get_selected_tag
     selected = @tags.find_all { |t| t.selected }
 
     raise RuntimeError if selected.length > 1
     
     # nil implicitly returned if no tag is selected
-    return selected.first
+    selected.first
   end
 
   def correct_count
