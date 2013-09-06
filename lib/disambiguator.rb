@@ -1,17 +1,94 @@
+require 'rbconfig'
 require 'tempfile'
 
+require_relative 'disambiguation_context'
+require_relative 'obno_stubs'
+require_relative 'obno_text'
+require_relative 'lemma_model'
+require_relative 'writers'
+require_relative 'obt_stat'
+require_relative 'disambiguation_unit'
+
 class Disambiguator
-  attr_accessor :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx,
+
+  HUNPOS_UTF8_MODEL_FN = File.join(root_path, 'models', 'trening-u-flert-d.cor.hunpos_model.utf8')
+  HUNPOS_LATIN1_MODEL_FN = File.join(root_path, 'models', 'trening-u-flert-d.cor.hunpos_model')
+
+  attr_accessor :model_fn, :text, :hunpos_stream, :evaluator, :hunpos_output, :hun_idx,
     :text_idx, :input_file, :lemma_model
 
   ##
-  # @param [Writer] writer
-  def initialize(writer=$default_writer)
-    @writer = writer
+  # @option opts [Writer] writer
+  # @option opts [String] format Input/output encoding (utf-8 or latin1).
+  # @option opts [String] model_fn Path to Hunpos model to use instead of the default one.
+  # @option opts [IO, StringIO] input_file IO instance to read input from.
+  def initialize(opts={})
+    @writer = opts[:writer] || InputWriter.new
+    @format = opts[:format] || "utf-8"
+    @model_fn = opts[:model_fn] || Disambiguator.hunpos_default_model_fn(@format)
+    @input_file = opts[:input_file] || $stdin
+
+    # info_message "Building lemma model"
+    @lemma_model = LemmaModel.new
+    # info_message "Finished building lemma model"
+
+    @platform = nil
   end
 
-  def self.run_hunpos(text)
-    info_message($hunpos_command + " " + $hunpos_default_model)
+  ##
+  # @private
+  def platform
+    if @platform.nil?
+      host_os = RbConfig::CONFIG['host_os']
+
+      @platform =
+          case host_os
+            when /mswin|msys|mingw|cygwin|bccwin|wince|emc/
+              :windows
+            when /darwin|mac os/
+              :osx
+            when /linux/
+              :linux
+            when /solaris|bsd/
+              :unix
+            else
+              :unknown
+          end
+    end
+
+    @platform
+  end
+
+  ##
+  # @private
+  def get_hunpos_command
+    case platform
+      when :osx
+        return File.join(root_path, "hunpos", "hunpos-1.0-macosx", "hunpos-tag")
+      when :linux
+        return File.join(root_path, "hunpos", "hunpos-1.0-linux", "hunpos-tag")
+      when :windows
+        return File.join(root_path, "hunpos", "hunpos-1.0-win", "hunpos-tag.exe")
+
+      else raise RuntimeError
+    end
+  end
+
+  ##
+  # @private
+  def self.hunpos_default_model_fn(format)
+    case format
+      when 'latin1'
+        HUNPOS_LATIN1_MODEL_FN
+      when 'utf-8'
+        HUNPOS_UTF8_MODEL_FN
+      else
+        raise NotImplementedError
+    end
+  end
+
+  def run_hunpos(text)
+    # info_message(Disambiguator.get_hunpos_command + " " + model_fn)
 
     hunpos_output = []
 
@@ -28,7 +105,7 @@ class Disambiguator
        end
     end
 
-    io = IO.popen("#{$hunpos_command} #{$hunpos_default_model} < #{in_file.path}", 'r+')
+    io = IO.popen("#{get_hunpos_command} #{model_fn} < #{in_file.path}", 'r+')
 
     io.each_line do |line|
        line = line.chomp
@@ -52,25 +129,13 @@ class Disambiguator
     context = DisambiguationContext.new
 
     # get input
-    @text = nil
-    if @input_file.nil?
-      @text = OBNOText.parse($stdin, $static_punctuation)
-    else
-      File.open(@input_file) do |f|
-        @text = OBNOText.parse f
-      end
-    end
+    # @todo get static punctuation switch from params
+    @text = OBNOText.parse(@input_file, true)
 
     # run Hunpos
-    info_message "Start running HunPos"
-    @hunpos_output = Disambiguator.run_hunpos @text
-    info_message "Finished running HunPos"
-
-    # build lemma model
-    info_message "Building lemma model"
-    $lemma_model = LemmaModel.new
-    $lemma_model.read_lemma_model $default_lemma_model
-    info_message "Finished building lemma model"
+    # info_message "Start running HunPos"
+    @hunpos_output = run_hunpos @text
+    # info_message "Finished running HunPos"
 
     # store all data in context
     context.input = @text.words
@@ -100,7 +165,7 @@ class Disambiguator
         @writer.write(w)
       end
     else
-      unit = DisambiguationUnit.new(word, hun, context)
+      unit = DisambiguationUnit.new(word, hun, context, @lemma_model)
       word = unit.resolve
 
       @writer.write(word)

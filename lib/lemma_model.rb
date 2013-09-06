@@ -1,20 +1,55 @@
+require_relative 'obt_stat'
+
+# @todo refactor model training to separate class
 class LemmaModel
+
+  UTF8_MODEL_FN = File.join(root_path, "models", "trening-u-flert-d.lemma_model.utf8")
+  LATIN1_MODEL_FN = File.join(root_path, "models", "trening-u-flert-d.lemma_model")
+
+  UTF8_NOWAC_FREQ_FN = File.join(root_path, "models", "nowac07_z10k-lemma-frq-noprop.lst.utf8")
+  LATIN1_NOWAC_FREQ_FN = File.join(root_path, "models", "nowac07_z10k-lemma-frq-noprop.lst")
+
   @@default_file = "data/trening-u-flert-d.train.cor"
   @@version_1_file_header = "version 1"
   @@lemma_data_sep = "^"
   
   attr_reader :model, :unknown_model
   
-  def initialize(file = @@default_file)
+  def initialize(opts={})
     @lemma_backoff_disambiguation = :nowac # :prefix, :nowac or :nowac_full
-    @model = {}
     @unknown_model = {}
+
+    @format = opts[:format] || "utf-8"
+    @model_fn = opts[:model_fn] || default_model_fn(@format)
+    @model = create_lemma_model(@model_fn)
 
     if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
       read_unknown_model
     end
   end
-  
+
+  def default_model_fn(format)
+    case format
+      when "utf-8"
+        UTF8_MODEL_FN
+      when 'latin1'
+        LATIN1_MODEL_FN
+      else
+        raise NotImplementedError
+    end
+  end
+
+  def nowac_freq_fn(format)
+    case format
+      when 'utf-8'
+        UTF8_NOWAC_FREQ_FN
+      when 'latin1'
+        LATIN1_NOWAC_FREQ_FN
+      else
+        NotImplementedError
+    end
+  end
+
   def model_entry(word)
     return @model[word]
   end
@@ -47,21 +82,21 @@ class LemmaModel
   end
 
   def disambiguate_lemma(word, lemma_list)
-    $tracer.message "Disambiguating: " + word
-    $tracer.message "From " + lemma_list.join(' ')
+    # $tracer.message "Disambiguating: " + word
+    # $tracer.message "From " + lemma_list.join(' ')
     
     word_lookup = @model[word]
 
-    $tracer.message "Lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
+    # $tracer.message "Lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
     
     # filter incompatible lemmas
     # TODO handle punctuation with prefixed $
     word_lookup = word_lookup.find_all { |l| lemma_list.include? l.first } if not word_lookup.nil?
 
-    $tracer.message "Filtered lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
+    # $tracer.message "Filtered lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
     
     if word_lookup.nil? or word_lookup.empty?
-      $tracer.message "Using backoff lemma model..."
+      # $tracer.message "Using backoff lemma model..."
       if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
         lemma_counts = lemma_list.collect { |lemma| [lemma, @unknown_model[lemma]] }
       elsif @lemma_backoff_disambiguation == :prefix
@@ -88,7 +123,7 @@ class LemmaModel
       end
     end
 
-    $tracer.message "Found best lemma: " + best_lemma
+    # $tracer.message "Found best lemma: " + best_lemma
 
     raise RuntimeError if best_lemma.nil?
     
@@ -226,7 +261,7 @@ class LemmaModel
   end
 
   def read_unknown_model
-    File.open $nowac_freq_file do |f|
+    File.open nowac_freq_fn(@format) do |f|
       f.each_line do |line|
         vals = line.strip.split
         word = vals[1]

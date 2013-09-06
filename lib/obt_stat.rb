@@ -1,10 +1,3 @@
-require "iconv"
-
-require "writers"
-require "obno_stubs"
-require "obno_text"
-require "lemma_model"
-require "disambiguation_unit"
-require "disambiguation_context"
-require "disambiguator"
-require "trace_logger"
+def root_path
+  File.expand_path(File.join(File.dirname(__FILE__), '..'))
+end

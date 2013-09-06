@@ -189,7 +189,7 @@ class Tag
       return nil if not elts.include? e
     end
 
-    $tracer.message "EQUAL: #{clean_out_tag} - #{tag_str}"
+    # $tracer.message "EQUAL: #{clean_out_tag} - #{tag_str}"
     
     return true
     # return clean_out_tag == tag_str
