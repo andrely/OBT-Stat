@@ -8,7 +8,7 @@ SPEC = Gem::Specification.new do |s|
   s.email = "andrely@ifi.uio.no"
   s.platform = Gem::Platform::RUBY
   s.summary = "Statistical disambiguator for the Oslo-Bergen Tagger."
-  candidates = Dir.glob("{bin,docs,lib,test,hunpos,models}/**/*")
+  candidates = Dir.glob("{bin,docs,lib,hunpos,models}/**/*")
   s.files = candidates.delete_if do |item|
     item.include?("rdoc")
   end
