@@ -1,53 +1,74 @@
 class InputWriter
+  ##
+  # @param [IO, StringIO] file IO instance to which output is written.
+  def initialize(file=$stdout)
+    @file = file
+  end
+
   def write(word)
     tag = word.get_selected_tag
-    
-    word.preamble.each { |str| puts str } if word.preamble
-    puts word.input_string
-    puts tag.input_string
+
+    word.preamble.each { |str| @file.puts str } if word.preamble
+    @file.puts word.input_string
+    @file.puts tag.input_string
   end
 
   def write_postamble(text)
-    puts text.postamble
+    @file.puts text.postamble
   end
 
+  #noinspection RubyUnusedLocalVariable
   def write_sentence_delimiter(word)
   end
 end
 
 class VRTWriter
-  def write(word)
-    tag = word.get_selected_tag
-    puts "#{word.output_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
+  ##
+  # @param [IO, StringIO] file IO instance to which output is written.
+  def initialize(file=$stdout)
+    @file = file
   end
 
+  def write(word)
+    tag = word.get_selected_tag
+    @file.puts "#{word.output_string}\t#{tag.lemma}\t#{tag.clean_out_tag}"
+  end
+
+  #noinspection RubyUnusedLocalVariable
   def write_postamble(text)
     # No postamble in VRT output
   end
 
   # empty line separates sentences
+  #noinspection RubyUnusedLocalVariable
   def write_sentence_delimiter(word)
-    puts
+    @file.puts
   end
 end
 
 class MarkWriter
+  ##
+  # @param [IO, StringIO] file IO instance to which output is written.
+  def initialize(file=$stdout)
+    @file = file
+  end
+
   def write(word)
-    word.preamble.each { |str| puts str } if word.preamble
-    puts word.input_string
+    word.preamble.each { |str| @file.puts str } if word.preamble
+    @file.puts word.input_string
 
     word.tags.each do |tag|
-      $stdout.write tag.input_string.rstrip
+      @file.write tag.input_string.rstrip
 
       if tag.selected
-        $stdout.write ' <SELECTED>'
+        @file.write ' <SELECTED>'
       end
 
       if tag.selected and not tag.correct
-        $stdout.write ' <ERROR>'
+        @file.write ' <ERROR>'
       end
 
-      puts
+      @file.puts
     end
   end
 
@@ -55,6 +76,7 @@ class MarkWriter
     puts text.postamble
   end
 
+  #noinspection RubyUnusedLocalVariable
   def write_sentence_delimiter(word)
   end
 end
