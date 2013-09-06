@@ -22,7 +22,7 @@ end
 # Globally available instanes of the lemma model, writer and trace logger
 $tracer = nil
 $lemma_model = nil
-$writer = InputWriter.new
+$default_writer = InputWriter.new
 
 # set to true for progress info and evaluation output
 $verbose_output = nil
@@ -125,9 +125,9 @@ if true #  __FILE__ == $0
         if arg == "echo"
           # default writer
         elsif arg == "vrt"
-          $writer = VRTWriter.new
+          $default_writer = VRTWriter.new
         elsif arg == "mark"
-          $writer = MarkWriter.new
+          $default_writer = MarkWriter.new
         else
           print_help
           exit
