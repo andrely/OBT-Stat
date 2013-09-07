@@ -6,12 +6,12 @@ require_relative '../../lib/obno_stubs'
 class WritersTest < Test::Unit::TestCase
   def test_input_writer
     out = StringIO.new
-    writer = InputWriter.new(out)
+    writer = TextlabOBTStat::InputWriter.new(out)
     assert(writer)
-    word = Word.new
+    word = TextlabOBTStat::Word.new
     word.preamble = ['ba', 'foo']
     word.input_string = 'word'
-    tag = Tag.new
+    tag = TextlabOBTStat::Tag.new
     tag.input_string = 'tag'
     tag.selected = true
     word.tags = [tag]
@@ -23,12 +23,12 @@ class WritersTest < Test::Unit::TestCase
 
   def test_vrt_writer
     out = StringIO.new
-    writer = VRTWriter.new(out)
+    writer = TextlabOBTStat::VRTWriter.new(out)
     assert(writer)
-    word = Word.new
+    word = TextlabOBTStat::Word.new
     word.preamble = ['ba', 'foo']
     word.string = 'word'
-    tag = Tag.new
+    tag = TextlabOBTStat::Tag.new
     tag.string = 'tag'
     tag.lemma = 'lemma'
     tag.selected = true
@@ -41,12 +41,12 @@ class WritersTest < Test::Unit::TestCase
 
   def test_mark_writer
     out = StringIO.new
-    writer = MarkWriter.new(out)
+    writer = TextlabOBTStat::MarkWriter.new(out)
     assert(writer)
-    word = Word.new
+    word = TextlabOBTStat::Word.new
     word.preamble = ['ba', 'foo']
     word.input_string = 'word'
-    tag = Tag.new
+    tag = TextlabOBTStat::Tag.new
     tag.input_string = 'tag'
     tag.selected = true
     word.tags = [tag]

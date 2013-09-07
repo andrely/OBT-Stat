@@ -7,30 +7,34 @@ require "rbconfig"
 require_relative '../lib/writers'
 require_relative '../lib/disambiguator'
 
-# prints messages to $stderr if the verbose switch is set
-def info_message(msg, newline = true)
-  $stderr.print msg if $verbose_output
-  $stderr.puts if newline
-end
+module TextlabOBTStat
 
-def print_help
-  puts "Help!"
-end
+# prints messages to $stderr if the verbose switch is set
+  def TextlabOBTStat.info_message(msg, newline = true)
+    $stderr.print msg if $verbose_output
+    $stderr.puts if newline
+  end
+
+  def TextlabOBTStat.print_help
+    puts "Help!"
+  end
 
 # sets up the evaluator and disambiguator, then runs the
 # disambiguator
-def run_disambiguator(params)
-  params[:input_file] = File.open(params[:input_fn], 'r') if params[:input_fn]
+  def TextlabOBTStat.run_disambiguator(params)
+    params[:input_file] = File.open(params[:input_fn], 'r') if params[:input_fn]
 
-  disambiguator = Disambiguator.new(params)
+    disambiguator = TextlabOBTStat::Disambiguator.new(params)
 
-  disambiguator.disambiguate
+    disambiguator.disambiguate
 
-  params[:input_file].close if params[:input_file]
+    params[:input_file].close if params[:input_file]
+  end
+
 end
 
 if true #  __FILE__ == $0
-  params = { writer: InputWriter.new,
+  params = { writer: TextlabOBTStat::InputWriter.new,
              format: "utf-8" }
 
   # parse options
@@ -46,48 +50,48 @@ if true #  __FILE__ == $0
 
   opts.each do |opt, arg|
     case opt
-    when "--input"
+      when "--input"
         params[:input_fn] = arg.inspect.delete('"')
-    when "--model"
+      when "--model"
         params[:hunpos_model_fn] = arg.inspect.delete('"')
-    when "--lemma-model"
+      when "--lemma-model"
         params[:lemma_model_fn] = arg.inspect.delete('"')
-    when "--verbose"
+      when "--verbose"
         params[:verbose] = true
-    when "--log"
+      when "--log"
         if arg == ""
           # setup trace to stderr
         else
           params[:log_file] = arg.inspect.delete('"')
         end
-    when "--output"
+      when "--output"
         if arg == "echo"
           # default writer
         elsif arg == "vrt"
-          params[:writer] = VRTWriter.new
+          params[:writer] = TextlabOBTStat::VRTWriter.new
         elsif arg == "mark"
-          params[:writer] = MarkWriter.new
+          params[:writer] = TextlabOBTStat::MarkWriter.new
         else
-          print_help
+          TextlabOBTStat.print_help
           exit
         end
-    when "--format"
+      when "--format"
         if arg == "utf8" or arg == "utf-8"
           # default format
         elsif arg == "latin1" or arg == "latin-1" or arg == "iso-8859-1"
           params[:format] = 'latin-1'
         else
-          print_help
+          TextlabOBTStat.print_help
           exit
         end
-    when "--static-punctuation"
-      params[:static_punctuation] = true
-    when "--help"
-        print_help
+      when "--static-punctuation"
+        params[:static_punctuation] = true
+      when "--help"
+        TextlabOBTStat.print_help
         exit
     end
   end
 
   # do the disambiguation
-  run_disambiguator(params)
+  TextlabOBTStat.run_disambiguator(params)
 end
