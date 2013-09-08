@@ -1,13 +1,10 @@
 module TextlabOBTStat
 
   class DisambiguationUnit
-    def initialize(input, hunpos, context, lemma_model)
+    def initialize(input, hunpos, lemma_model)
       @input = input
       @hunpos = hunpos
       @lemma_model = lemma_model
-
-      @context = context
-      @pos = context.input_idx
     end
 
     def resolve

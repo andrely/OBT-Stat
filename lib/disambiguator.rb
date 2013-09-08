@@ -11,6 +11,8 @@ require_relative 'disambiguation_unit'
 
 module TextlabOBTStat
 
+  # @todo Should disambiguate on original word if present, such that capitalized first words
+  #   in a sentence is used. Currently hunpos is passed normailized string.
   class Disambiguator
 
     HUNPOS_UTF8_MODEL_FN = File.join(TextlabOBTStat.root_path,
@@ -105,6 +107,7 @@ module TextlabOBTStat
       File.open(in_file.path, 'wb') do |f|
         text.sentences.each do |s|
           s.words.each do |w|
+            # TODO Hunpos should be run on orig string if available.
             f.puts w.normalized_string.downcase
           end
 
@@ -133,7 +136,6 @@ module TextlabOBTStat
     # This function drives the disambiguation loop over
     # the tokens in the OB annotated input.
     def disambiguate
-      context = DisambiguationContext.new
 
       # get input
       # @todo get static punctuation switch from params
@@ -145,10 +147,9 @@ module TextlabOBTStat
       # info_message "Finished running HunPos"
 
       # store all data in context
-      context.input = @text.words
-      context.hunpos = @hunpos_output
+      context = DisambiguationContext.new(@text.words, @hunpos_output)
 
-      while not context.at_end?
+      until context.at_end?
         disambiguate_word(context)
         context.advance
       end
@@ -157,32 +158,26 @@ module TextlabOBTStat
     end
 
     def disambiguate_word(context)
-      word = context.current(:input)
-      hun = context.current(:hunpos)
+      word, hun = context.current
 
       word_s = word.normalized_string.downcase
       hun_s = hun.first
 
-      if not word_s == hun_s
-        out_words = context.synchronize
+      unless word_s == hun_s
+        raise RuntimeError if word.ambigious?
 
-        out_words.each do |w|
-          raise RuntimeError if w.ambigious?
-
-          @writer.write(w)
-        end
+        @writer.write(word)
       else
-        unit = DisambiguationUnit.new(word, hun, context, @lemma_model)
+        unit = DisambiguationUnit.new(word, hun, @lemma_model)
         word = unit.resolve
 
         @writer.write(word)
 
-        if word.end_of_sentence?
-          @writer.write_sentence_delimiter(word)
-        end
       end
 
-      return true
+      if word.end_of_sentence?
+        @writer.write_sentence_delimiter(word)
+      end
     end
 
     def self.token_word_count(token)
