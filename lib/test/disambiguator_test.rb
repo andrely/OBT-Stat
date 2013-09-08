@@ -24,5 +24,14 @@ class DisambiguatorTest < Test::Unit::TestCase
     assert_equal("Hallo\thallo\tinterj\ni\ti\tprep\nluken\tluke\tsubst_appell_mask_be_ent\n.\t$.\t<punkt>".strip,
                  out.string.strip)
 
+    # "til sjøs" is combined by the multitagger
+    in_file = StringIO.new("<word>Vi</word>\n\"<vi>\"\n\t\"vi\" pron fl pers hum nom 1 \n<word>drar</word>\n\"<drar>\"\n\t\"dra\" verb pres tr1 i1 tr11 pa1 a3 rl5 pa5 tr11/til a7 a9 \n<word>til sjøs</word>\n\"<til sjøs>\"\n\t\"til sjøs\" prep prep+subst @adv \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt> \n")
+    out = StringIO.new
+    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(out),
+                                               input_file: in_file)
+    assert(disamb)
+    disamb.disambiguate
+    assert_equal("Vi\tvi\tpron_fl_pers_hum_nom_1\ndrar\tdra\tverb_pres\ntil sjøs\ttil sjøs\tprep_prep+subst_@adv\n.\t$.\t<punkt>".strip,
+                 out.string.strip)
   end
 end
