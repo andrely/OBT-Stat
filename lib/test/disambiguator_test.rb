@@ -6,14 +6,9 @@ require 'stringio'
 
 require_relative '../disambiguator'
 require_relative '../writers'
+require_relative '../obno_text'
 
 class DisambiguatorTest < Test::Unit::TestCase
-  def test_token_word_count
-    assert_equal(1, TextlabOBTStat::Disambiguator.token_word_count("industrien"))
-    assert_equal(2, TextlabOBTStat::Disambiguator.token_word_count("i_hop"))
-    assert_equal(3, TextlabOBTStat::Disambiguator.token_word_count("til_og_med"))
-  end
-
   def test_disambiguator
     in_file = StringIO.new("<word>Hallo</word>\n\"<hallo>\"\n\t\"hallo\" interj \n\t\"hallo\" subst appell nøyt ub ent \n\t\"hallo\" subst appell nøyt ub fl \n<word>i</word>\n\"<i>\"\n\t\"i\" prep \n<word>luken</word>\n\"<luken>\"\n\t\"luke\" subst appell mask be ent \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt>")
     out = StringIO.new
@@ -54,5 +49,27 @@ class DisambiguatorTest < Test::Unit::TestCase
     disamb.disambiguate
     assert_equal([["vi", "pron_pers_1_fl_hum_nom"], ["drar", "verb_pres"], ["til_sjøs", "prep"], [".", "clb_<punkt>"]],
                  disamb.hunpos_output)
+  end
+
+  def test_resolve
+    in_file = StringIO.new("<word>Hallo</word>\n\"<hallo>\"\n\t\"hallo\" interj \n\t\"hallo\" subst appell nøyt ub ent \n\t\"hallo\" subst appell nøyt ub fl \n<word>i</word>\n\"<i>\"\n\t\"i\" prep \n<word>luken</word>\n\"<luken>\"\n\t\"luke\" subst appell mask be ent \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt>")
+    obt_input = TextlabOBTStat::OBNOText.parse(in_file)
+    assert(obt_input)
+    assert_equal(4, obt_input.words.count)
+    hunpos = [["hallo", "subst_prop"], ["i", "prep"], ["luken", "subst_mask_appell_ent_be"], [".", "clb_<punkt>"]]
+    disamb = TextlabOBTStat::Disambiguator.new
+    assert(disamb)
+    w = disamb.resolve(obt_input.words[0], hunpos[0], disamb.lemma_model)
+    assert_equal(1, w.tags.find_all { |t| t.selected }.count)
+    assert(w.get_selected_tag.equal("interj"))
+    w = disamb.resolve(obt_input.words[1], hunpos[1], disamb.lemma_model)
+    assert_equal(1, w.tags.find_all { |t| t.selected }.count)
+    assert(w.get_selected_tag.equal("prep"))
+    w = disamb.resolve(obt_input.words[2], hunpos[2], disamb.lemma_model)
+    assert_equal(1, w.tags.find_all { |t| t.selected }.count)
+    assert(w.get_selected_tag.equal("subst_appell_mask_be_ent"))
+    w = disamb.resolve(obt_input.words[3], hunpos[3], disamb.lemma_model)
+    assert_equal(1, w.tags.find_all { |t| t.selected }.count)
+    assert(w.get_selected_tag.equal("<punkt>"))
   end
 end

@@ -187,37 +187,27 @@ module TextlabOBTStat
     # @return [Word] The Word instance passed as input argument with disambiguated tag marked as selected.
     def resolve(input, hunpos, lemma_model)
       if input.ambigious?
-        # Hunpos tag matches input
         if input.match_clean_out_tag(hunpos[1])
+          # Hunpos tag matches input, only consider matching tags
           candidates = input.tags.find_all { |t| t.equal(hunpos[1]) }
-          if candidates.count > 1
-            lemmas = candidates.collect { |t| t.lemma }
-            lemma = lemma_model.disambiguate_lemma(input.string, lemmas)
-
-            candidates = candidates.find_all { |t| t if t.lemma.downcase == lemma.downcase }
-          end
-
-          candidates.first.selected = true
-
-          return input
         else
-          # no match, choose the word with the best lemma
           candidates = input.tags.find_all { |t| t.lemma }
-          lemmas = candidates.collect { |t| t.lemma }
-          lemma = lemma_model.disambiguate_lemma(input.string, lemmas)
-
-          tags = input.tags.find_all { |t| t.lemma == lemma }
-
-          # take the first tag with the correct lemma
-          tag = tags.first
-          # or the first of all OB tags if none with the chosen lemma
-          # is available
-          tag = input.tags.first if tag.nil?
-
-          tag.selected = true
-
-          return input
         end
+
+        lemmas = candidates.collect { |t| t.lemma }
+        lemma = lemma_model.disambiguate_lemma(input.string, lemmas)
+
+        tags = input.tags.find_all { |t| t.lemma.downcase == lemma.downcase }
+
+        # take the first tag with the correct lemma
+        tag = tags.first
+        # or the first of all OB tags if none with the chosen lemma
+        # is available
+        tag = input.tags.first if tag.nil?
+
+        tag.selected = true
+
+        input
       else
         raise RuntimeError if input.tags.length > 1
 
@@ -225,10 +215,6 @@ module TextlabOBTStat
 
         input
       end
-    end
-
-    def self.token_word_count(token)
-      return token.split('_').count
     end
   end
 end
