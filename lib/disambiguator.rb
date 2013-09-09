@@ -108,6 +108,7 @@ module TextlabOBTStat
         text.sentences.each do |s|
           s.words.each do |w|
             # TODO Hunpos should be run on orig string if available.
+            # TODO Hunpos should split up combined words
             f.puts w.normalized_string.downcase
           end
 
@@ -168,8 +169,8 @@ module TextlabOBTStat
 
         @writer.write(word)
       else
-        unit = DisambiguationUnit.new(word, hun, @lemma_model)
-        word = unit.resolve
+        unit = DisambiguationUnit.new
+        word = unit.resolve(word, hun, @lemma_model)
 
         @writer.write(word)
 
