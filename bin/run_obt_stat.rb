@@ -9,12 +9,6 @@ require_relative '../lib/disambiguator'
 
 module TextlabOBTStat
 
-# prints messages to $stderr if the verbose switch is set
-  def TextlabOBTStat.info_message(msg, newline = true)
-    $stderr.print msg if $verbose_output
-    $stderr.puts if newline
-  end
-
   def TextlabOBTStat.print_help
     puts "Help!"
   end
@@ -23,6 +17,8 @@ module TextlabOBTStat
 # disambiguator
   def TextlabOBTStat.run_disambiguator(params)
     params[:input_file] = File.open(params[:input_fn], 'r') if params[:input_fn]
+    # instantiate writer with params based on command line arguments
+    params[:writer] = params[:writer].new(xml: params[:sent_seg] == :xml)
 
     disambiguator = TextlabOBTStat::Disambiguator.new(params)
 
@@ -33,8 +29,10 @@ module TextlabOBTStat
 
 end
 
-if true #  __FILE__ == $0
-  params = { writer: TextlabOBTStat::InputWriter.new,
+if __FILE__ == $0
+  # default argument values
+  params = { writer: TextlabOBTStat::InputWriter,
+             sent_seg: :mtag,
              format: "utf-8" }
 
   # parse options
@@ -46,7 +44,7 @@ if true #  __FILE__ == $0
                         ["--output", "-o", GetoptLong::REQUIRED_ARGUMENT],
                         ["--format", "-f", GetoptLong::REQUIRED_ARGUMENT],
                         ["--help", "-h", GetoptLong::NO_ARGUMENT],
-                        ["--static-punctuation", "-s", GetoptLong::NO_ARGUMENT])
+                        ["--sent-seg", "-s", GetoptLong::REQUIRED_ARGUMENT])
 
   opts.each do |opt, arg|
     case opt
@@ -68,9 +66,9 @@ if true #  __FILE__ == $0
         if arg == "echo"
           # default writer
         elsif arg == "vrt"
-          params[:writer] = TextlabOBTStat::VRTWriter.new
+          params[:writer] = TextlabOBTStat::VRTWriter
         elsif arg == "mark"
-          params[:writer] = TextlabOBTStat::MarkWriter.new
+          params[:writer] = TextlabOBTStat::MarkWriter
         else
           TextlabOBTStat.print_help
           exit
@@ -84,8 +82,15 @@ if true #  __FILE__ == $0
           TextlabOBTStat.print_help
           exit
         end
-      when "--static-punctuation"
-        params[:static_punctuation] = true
+      when "--sent-seg"
+        arg = arg.strip.to_sym
+
+        unless [:static, :mtag, :xml].member?(arg)
+          TextlabOBTStat.print_help
+          exit
+        end
+
+        params[:sent_seg] = arg
       when "--help"
         TextlabOBTStat.print_help
         exit

@@ -1,0 +1,110 @@
+<s id="1">
+<word>vi</word>
+"<vi>"
+	"vi" pron fl pers hum nom 1
+<word>opplever</word>
+"<opplever>"
+	"oppleve" verb pres tr6 tr8 tr18 tr19
+<word>også</word>
+"<også>"
+	"også" adv
+<word>at</word>
+"<at>"
+	"at" sbu
+<word>tolkningen</word>
+"<tolkningen>"
+	"tolkning" subst appell mask be ent
+<word>av</word>
+"<av>"
+	"AV" adj fork
+	"av" prep
+<word>reglene</word>
+"<reglene>"
+	"regel" subst appell mask be fl
+	"regle" subst appell fem be fl
+	"regle" subst appell mask be fl
+<word>avhenger</word>
+"<avhenger>"
+	"avhenge" verb pres tr12
+<word>av</word>
+"<av>"
+	"av" prep
+<word>den</word>
+"<den>"
+	"den" det dem mask ent
+<word>stortingsrepresentanten</word>
+"<stortingsrepresentanten>"
+	"stortingsrepresentant" subst appell mask be ent
+<word>som</word>
+"<som>"
+	"som" sbu
+<word>tar</word>
+"<tar>"
+	"ta" verb pres tr1 i1 tr11 pa1 d5 rl9 a3 pa4 pa2 pa5 tr11/til rl6 tr9 a11 a4 rl14 rl15 rl13 pa6 pa7
+<word>opp</word>
+"<opp>"
+	"opp" prep
+<word>en</word>
+"<en>"
+	"en" det mask ent kvant
+<word>sak</word>
+"<sak>"
+	"sak" subst appell mask ub ent
+<word>,</word>
+"<,>"
+	"$," clb <komma>
+<word>sier</word>
+"<sier>"
+	"si" verb pres tr1 tr11 pa1 d5 tr2 d1 d4 pa3
+<word>jørgensen</word>
+"<jørgensen>"
+	"jørgens" subst appell mask be ent samset
+	"jørgensen" subst appell fem ub ent samset <*sen>
+	"jørgensen" subst appell mask ub ent samset <*sen>
+	"jørgensen" subst appell mask ub fl samset <*sen>
+<word>.</word>
+"<.>"
+	"$." clb <punkt>
+</s>
+<s id="2">
+<word>men</word>
+
+"<men>"
+	"men" konj clb
+<word>nå</word>
+"<nå>"
+	"nå" adv
+<word>ser</word>
+"<ser>"
+	"se" verb pres tr1 tr11 tr2 pa2 pa5 tr11/til tr3 tr4
+<word>det</word>
+"<det>"
+	"det" pron nøyt ent pers 3
+<word>ut</word>
+"<ut>"
+	"ut" prep
+<word>til</word>
+"<til>"
+	"til" prep
+<word>å</word>
+"<å>"
+	"å" inf-merke
+<word>svikte</word>
+"<svikte>"
+	"svikte" verb inf tr1 i1 i2
+<word>,</word>
+"<,>"
+	"$," clb <komma>
+<word>mener</word>
+"<mener>"
+	"mene" verb pres tr1 tr2
+<word>jørgensen</word>
+"<jørgensen>"
+	"jørgens" subst appell mask be ent samset
+	"jørgensen" subst appell fem ub ent samset <*sen>
+	"jørgensen" subst appell mask ub ent samset <*sen>
+	"jørgensen" subst appell mask ub fl samset <*sen>
+<word>.</word>
+"<.>"
+	"$." clb <punkt>
+</s>

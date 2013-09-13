@@ -17,15 +17,18 @@ module TextlabOBTStat
         s.words
       end
 
-      return sentences.flatten
+      sentences.flatten
     end
   end
 
   class Sentence
-    attr_accessor :words, :length, :text_index
+    attr_accessor :words, :length, :text_index, :attrs
 
     def initialize
       @words = []
+      # attributes on the sentence delimiter tag if any
+      # empty hash here means there was a tag with no attributes
+      @attrs = nil
     end
 
     def to_s
@@ -38,11 +41,14 @@ module TextlabOBTStat
   end
 
   class Word
-    attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags, :input_string, :preamble, :end_of_sentence_p
+    attr_accessor :string, :orig_string, :sentence_index, :tag_count, :tags, :input_string, :preamble,
+                  :end_of_sentence_p
 
-    @@punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
+    PUNCTUATION_REGEX = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
 
     def initialize
+      @string = nil
+      @orig_string = nil
       @tags = []
       @preamble = []
       @end_of_sentence_p = nil
@@ -58,14 +64,14 @@ module TextlabOBTStat
       string = @string.gsub(/[«»]/, '"')
 
       string = string.gsub(/\$([\.\:\|\?\!\,\(\)\-\"\;])/, '\1')
-      return string.gsub(/\s/, '_')
+      string.gsub(/\s/, '_')
     end
 
     # returns the appropriate string for output from the tagger
     # that is the original string if available otherwise the OB
     # word form string
     def output_string
-      return (@orig_string or @string)
+      (@orig_string or @string)
     end
 
     def tag_by_string(str)
@@ -74,15 +80,15 @@ module TextlabOBTStat
         return t if t.equal(str)
       end
 
-      return nil
+      nil
     end
 
     def get_ambiguities
-      return @tags.length
+      @tags.length
     end
 
     def ambigious?
-      return get_ambiguities > 1
+      get_ambiguities > 1
     end
 
     def match_clean_out_tag(tag)
@@ -95,14 +101,14 @@ module TextlabOBTStat
     end
 
     def get_correct_tags
-      return @tags.find_all { |t| t.correct }
+      @tags.find_all { |t| t.correct }
     end
 
     def get_correct_tag
       correct_tags = get_correct_tags
       raise RuntimeError if correct_tags.count > 1
 
-      return correct_tags.first
+      correct_tags.first
     end
 
     def get_selected_tag
@@ -115,22 +121,22 @@ module TextlabOBTStat
     end
 
     def correct_count
-      return get_correct_tags.length
+      get_correct_tags.length
     end
 
     # this must be expanded if sentence segmentation is made more complex
     def capitalized?
       if @sentence_index == 0
-        return true
+        true
       elsif get_correct_tags.count > 0
-        return get_correct_tags.first.capitalized
+        get_correct_tags.first.capitalized
       else
-        return @tags.all? { |t| t.capitalized }
+        @tags.all? { |t| t.capitalized }
       end
     end
 
     def is_punctuation?
-      return @string.match(@@punctuation_regex)
+      @string.match(PUNCTUATION_REGEX)
     end
 
     def remove_duplicate_clean_tags!
@@ -144,19 +150,23 @@ module TextlabOBTStat
         end
       end
 
-      return @tags
+      @tags
     end
 
     def end_of_sentence?
-      return @end_of_sentence_p
+      @end_of_sentence_p
     end
   end
 
   class Tag
     attr_accessor :lemma, :string, :correct, :selected, :capitalized, :index, :input_string
 
-    @@clean_tag_regex = Regexp.compile('((i|pa|tr|pr|r|rl|a|d|n)\d+(\/til)?)')
+    CLEAN_TAG_REGEX = Regexp.compile('((i|pa|tr|pr|r|rl|a|d|n)\d+(\/til)?)')
 
+    def initialize
+      @string = nil
+      @correct = nil
+    end
 
     def clean_out_tag
       tag = @string
@@ -174,11 +184,7 @@ module TextlabOBTStat
         tag = tag.gsub(/^clb (.*)$/, '\1')
       end
 
-      return tag.gsub(@@clean_tag_regex, '').strip.gsub(/\s+/, '_')
-    end
-
-    def initialize
-      @correct = nil
+      tag.gsub(CLEAN_TAG_REGEX, '').strip.gsub(/\s+/, '_')
     end
 
     def equal(tag_str)
@@ -192,10 +198,7 @@ module TextlabOBTStat
         return nil if not elts.include? e
       end
 
-      # $tracer.message "EQUAL: #{clean_out_tag} - #{tag_str}"
-
-      return true
-      # return clean_out_tag == tag_str
+      true
     end
   end
 end

@@ -23,12 +23,8 @@ module TextlabOBTStat
     end
 
     def each_sentence
-      File.open(@file) do |f|
-        # @peeked_word_record, @peeked_orig_word_record, @peeked_preamble = get_word_header(f)
-
-        while sentence = get_next_sentence(f)
-          yield sentence
-        end
+      while sentence = get_next_sentence(file)
+        yield sentence
       end
     end
 
@@ -52,7 +48,7 @@ module TextlabOBTStat
 
       return nil if sentence.words.empty?
 
-      return sentence
+      sentence
     end
 
     def get_next_word(f)
@@ -63,7 +59,7 @@ module TextlabOBTStat
 
       raise RuntimeError if word.tags.empty?
 
-      return word
+      word
     end
 
     def get_word_tags(f, word)
@@ -82,14 +78,12 @@ module TextlabOBTStat
 
       raise RuntimeError if tags.empty?
 
-      return tags
+      tags
     end
 
     def get_word_header(f)
-      header = nil
-
       if @peeked_word_record
-        header = [@peeked_word_record, @peeked_orig_word_record, @peeled_preamble]
+        header = [@peeked_word_record, @peeked_orig_word_record, @peeked_preamble]
       elsif @peeked_orig_word_record
         @peeked_word_record = get_word(f.readline)
         header = [@peeked_word_record, @peeked_orig_word_record, @peeked_preamble]
@@ -105,7 +99,7 @@ module TextlabOBTStat
 
       unpeek
 
-      return header
+      header
     end
 
     def peek(line)
@@ -137,15 +131,15 @@ module TextlabOBTStat
         return m[1]
       end
 
-      return nil
+      nil
     end
 
     def is_tag_line(line)
       line.match(@tag_regex)
     end
 
-    def self.getTag(line)
-      if (m = line.match(@tag_regex)) then
+    def self.get_tag(line)
+      if (m = line.match(@tag_regex))
         lemma = m[1]
         tag = m[2]
         correct = !m[5].nil?
@@ -180,7 +174,7 @@ module TextlabOBTStat
         return m[1]
       end
 
-      return nil
+      nil
     end
   end
 
@@ -190,11 +184,18 @@ module TextlabOBTStat
     @punctuation_regex = Regexp.compile('^\$?[\.\:\|\?\!]$') # .:|!?
     @orig_word_regex = Regexp.compile('^<word>(.*)</word>$')
 
+    # XML tag containing sentences in TEI documents.
+    SENT_SEG_TAG = 's'
+    OPEN_SENT_TAG_REGEX = Regexp.compile("^\\w*<#{SENT_SEG_TAG}(.*)?>")
+    CLOSE_SENT_TAG_REGEX = Regexp.compile("^\\w*</#{SENT_SEG_TAG}>")
+
     # Parses the OB text in filedata and populates the Text instance argument
     # with the result.
-    # file - A File instance to read input from
-    # returns true
-    def self.parse(file, use_static_punctuation = false)
+    #
+    # @param [IO, StringIO] file
+    # @param [Symbol] sent_seg How to segment sentences (:mtag, :static, :xml)
+    # @return [Text] Parsed text input.
+    def self.parse(file, sent_seg=:static)
       text = Text.new
 
       word = nil
@@ -208,21 +209,21 @@ module TextlabOBTStat
       file.each_line do |line|
         # if there is an original word form, store it and put in the Word instance
         # when we encounter the OB word line
-        if isOrigWordLine(line)
+        if is_orig_word_line(line)
           # there shouldn't be two original word lines without the corresponding OB
           # word data. Error if this happens
-          if not orig_word.nil?
+          unless orig_word.nil?
             raise RuntimeError
           end
 
-          orig_word = GetOrigWordLine(line)
+          orig_word = get_orig_word_line(line)
           preamble << line
 
           # if we got a new OB word, create a new word, populate it with the parsed
           # data and push it on the sentence word list
-        elsif isWordLine(line) then
+        elsif is_word_line(line)
           word = Word.new
-          word.string = getWord(line).strip
+          word.string = get_word(line).strip
 
           # store the original word string if there is one
           word.orig_string = orig_word
@@ -242,15 +243,15 @@ module TextlabOBTStat
 
           # if there is a sentence boundary, push the sentence on the texts sentence
           # list and create a new sentence instance.
-          if isPunctuation(word.string) and use_static_punctuation then
+          if is_punctuation(word.string) and sent_seg == :static
             word.end_of_sentence_p = true
           end
 
           # if we got a tag, parse it and populate a Tag instance that is pushed onto
           # the tag list of the current word
-        elsif isTagLine(line) then
+        elsif is_tag_line(line)
           tag = Tag.new
-          lemma, string, correct, capitalized, end_of_sentence = getTag(line)
+          lemma, string, correct, capitalized, end_of_sentence = get_tag(line)
           tag.lemma = lemma.strip
           tag.string = string.strip
           tag.correct = correct
@@ -260,27 +261,36 @@ module TextlabOBTStat
           word.tags << tag
           tag.input_string = line
 
-          if end_of_sentence and not use_static_punctuation then
+          if end_of_sentence and sent_seg == :mtag
             word.end_of_sentence_p = true
           end
-
-          # line with unknown data
+        elsif sent_seg == :xml and is_open_sent_tag_line(line)
+          # @todo around tags other input should be added to preamble
+          attrs = attributes(line)
+          sentence.attrs = attrs
+        elsif sent_seg == :xml and is_close_sent_tag_line(line)
+          word.end_of_sentence_p = true
         else
+          # line with unknown data
           preamble << line
         end
 
-        if word and word.end_of_sentence_p then
-          sentence.length = index
-          sentence.text_index = sent_count
-          text.sentences << sentence
-          sentence = Sentence.new
-          index = 0
-          sent_count += 1
+        if word and word.end_of_sentence_p
+          # @todo hacky
+          # if index is not reset we haven't started a new sentence
+          unless index == 0
+            sentence.length = index
+            sentence.text_index = sent_count
+            text.sentences << sentence
+            sentence = Sentence.new
+            index = 0
+            sent_count += 1
+          end
         end
       end
 
       # store the last sentence when we're done
-      if index > 0 then
+      if index > 0
         sentence.length = index
         sentence.text_index = sent_count
         text.sentences << sentence
@@ -293,11 +303,11 @@ module TextlabOBTStat
       return text
     end
 
-    def self.isWordLine(line)
+    def self.is_word_line(line)
       line.match(@word_regex)
     end
 
-    def self.getWord(line)
+    def self.get_word(line)
       if (m = line.match(@word_regex)) then
         return m[1]
       end
@@ -305,12 +315,40 @@ module TextlabOBTStat
       return nil
     end
 
-    def self.isTagLine(line)
+    def self.is_tag_line(line)
       line.match(@tag_regex)
     end
 
-    def self.getTag(line)
-      if (m = line.match(@tag_regex)) then
+    # @param [String] line
+    # @return [TrueClass, FalseClass]
+    def self.is_open_sent_tag_line(line)
+      not line.match(OPEN_SENT_TAG_REGEX).nil?
+    end
+
+    # @param [String] line
+    # @return [TrueClass, FalseClass] true if line contains closing sentence segmention tag.
+    def self.is_close_sent_tag_line(line)
+      not line.match(CLOSE_SENT_TAG_REGEX).nil?
+    end
+
+    # @param [String] tag_line String containing tag.
+    # @return [NilClass, Hash] Hash containing the attributes if a tag is present in the string, nil otherwise.
+    def self.attributes(tag_line)
+      m = tag_line.match(OPEN_SENT_TAG_REGEX)
+      return nil if m.nil? or m.captures.empty?
+      attr = {}
+
+      attr_str = m.captures.first
+      attr_str.split.each do |str|
+        id, val = str.split('=')
+        attr[id.to_sym] = TextlabOBTStat::remove_quotes(val.strip)
+      end
+
+      attr
+    end
+
+    def self.get_tag(line)
+      if (m = line.match(@tag_regex))
         lemma = m[1]
         tag = m[2]
         correct = !m[5].nil?
@@ -329,14 +367,14 @@ module TextlabOBTStat
       return nil
     end
 
-    def self.isPunctuation(str)
+    def self.is_punctuation(str)
       return str.match(@punctuation_regex)
     end
 
     # Checks if the passed line contains an original word string.
     # line - an OB output line
     # returns true if the line matches the original word line format, nil if not
-    def self.isOrigWordLine(line)
+    def self.is_orig_word_line(line)
       line.match(@orig_word_regex)
     end
 
@@ -344,7 +382,7 @@ module TextlabOBTStat
     # the word string in an XML word tag.
     # line - an OB output line
     # returns the original word string if the line matches, nil otherwise
-    def self.GetOrigWordLine(line)
+    def self.get_orig_word_line(line)
       if m = line.match(@orig_word_regex)
         return m[1]
       end

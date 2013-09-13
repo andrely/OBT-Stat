@@ -6,12 +6,13 @@ require_relative 'obno_stubs'
 require_relative 'obno_text'
 require_relative 'lemma_model'
 require_relative 'writers'
-require_relative 'obt_stat'
+require_relative 'globals'
 
 module TextlabOBTStat
 
   # @todo Should disambiguate on original word if present, such that capitalized first words
   #   in a sentence is used. Currently hunpos is passed normailized string.
+  # @todo add available? method.
   class Disambiguator
 
     HUNPOS_UTF8_MODEL_FN = File.join(TextlabOBTStat.root_path,
@@ -28,7 +29,8 @@ module TextlabOBTStat
     # @option opts [String] model_fn Path to Hunpos model to use instead of the default one.
     # @option opts [IO, StringIO] input_file IO instance to read input from.
     def initialize(opts={})
-      @writer = opts[:writer] || InputWriter.new
+      @sent_seg = opts[:sent_seg] || :use_static_punctuation
+      @writer = opts[:writer] || InputWriter.new(xml: @sent_seg == :xml)
       @format = opts[:format] || "utf-8"
       @model_fn = opts[:model_fn] || Disambiguator.hunpos_default_model_fn(@format)
       @input_file = opts[:input_file] || $stdin
@@ -95,6 +97,7 @@ module TextlabOBTStat
       end
     end
 
+    # @todo Suppress stderr output from hunpos.
     def run_hunpos(text)
       # info_message(Disambiguator.get_hunpos_command + " " + model_fn)
 
@@ -121,7 +124,7 @@ module TextlabOBTStat
         line = line.chomp
 
         # skip empty lines separating sentences
-        if not line == ""
+        unless line == ""
           hun_word, hun_tag = line.split(/\s/)
           hunpos_output.push([hun_word, hun_tag])
         end
@@ -130,7 +133,7 @@ module TextlabOBTStat
       in_file.delete()
       io.close
 
-      return hunpos_output
+      hunpos_output
     end
 
     # This function drives the disambiguation loop over
@@ -139,7 +142,7 @@ module TextlabOBTStat
 
       # get input
       # @todo get static punctuation switch from params
-      @text = OBNOText.parse(@input_file, true)
+      @text = OBNOText.parse(@input_file, @sent_seg)
 
       # run Hunpos
       # info_message "Start running HunPos"
@@ -149,9 +152,15 @@ module TextlabOBTStat
       # store all data in context
       context = DisambiguationContext.new(@text.words, @hunpos_output)
 
-      until context.at_end?
-        disambiguate_word(context)
-        context.advance
+      @text.sentences.each do |sentence|
+        @writer.write_sentence_header(sentence)
+
+        sentence.words.each do
+          disambiguate_word(context)
+          context.advance
+        end
+
+        @writer.write_sentence_footer(sentence)
       end
 
       @writer.write_postamble(@text)
@@ -163,7 +172,7 @@ module TextlabOBTStat
       word_s = word.normalized_string.downcase
       hun_s = hun.first
 
-      unless word_s == hun_s
+      if word_s != hun_s
         raise RuntimeError if word.ambigious?
 
         @writer.write(word)
@@ -171,11 +180,6 @@ module TextlabOBTStat
         word = resolve(word, hun, @lemma_model)
 
         @writer.write(word)
-
-      end
-
-      if word.end_of_sentence?
-        @writer.write_sentence_delimiter(word)
       end
     end
 

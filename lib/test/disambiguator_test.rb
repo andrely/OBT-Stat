@@ -12,7 +12,7 @@ class DisambiguatorTest < Test::Unit::TestCase
   def test_disambiguator
     in_file = StringIO.new("<word>Hallo</word>\n\"<hallo>\"\n\t\"hallo\" interj \n\t\"hallo\" subst appell nøyt ub ent \n\t\"hallo\" subst appell nøyt ub fl \n<word>i</word>\n\"<i>\"\n\t\"i\" prep \n<word>luken</word>\n\"<luken>\"\n\t\"luke\" subst appell mask be ent \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt>")
     out = StringIO.new
-    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(out),
+    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(file: out),
                                                input_file: in_file)
     assert(disamb)
     disamb.disambiguate
@@ -22,7 +22,7 @@ class DisambiguatorTest < Test::Unit::TestCase
     # "til sjøs" is combined by the multitagger
     in_file = StringIO.new("<word>Vi</word>\n\"<vi>\"\n\t\"vi\" pron fl pers hum nom 1 \n<word>drar</word>\n\"<drar>\"\n\t\"dra\" verb pres tr1 i1 tr11 pa1 a3 rl5 pa5 tr11/til a7 a9 \n<word>til sjøs</word>\n\"<til sjøs>\"\n\t\"til sjøs\" prep prep+subst @adv \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt> \n")
     out = StringIO.new
-    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(out),
+    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(file: out),
                                                input_file: in_file)
     assert(disamb)
     disamb.disambiguate
@@ -30,10 +30,22 @@ class DisambiguatorTest < Test::Unit::TestCase
                  out.string.strip)
   end
 
+  def test_disambiguator_xml
+    in_file = StringIO.new("<s id=\"1\">\n<word>Hallo</word>\n\"<hallo>\"\n\t\"hallo\" interj \n\t\"hallo\" subst appell nøyt ub ent \n\t\"hallo\" subst appell nøyt ub fl \n<word>i</word>\n\"<i>\"\n\t\"i\" prep \n<word>luken</word>\n\"<luken>\"\n\t\"luke\" subst appell mask be ent \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt>\n</s>\n")
+    out = StringIO.new
+    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(file: out, xml: true),
+                                               input_file: in_file,
+                                               sent_seg: :xml)
+    assert(disamb)
+    disamb.disambiguate
+    assert_equal("<s id=\"1\">\nHallo\thallo\tinterj\ni\ti\tprep\nluken\tluke\tsubst_appell_mask_be_ent\n.\t$.\t<punkt>\n</s>".strip,
+                 out.string.strip)
+  end
+
   def test_run_hunpos
     in_file = StringIO.new("<word>Hallo</word>\n\"<hallo>\"\n\t\"hallo\" interj \n\t\"hallo\" subst appell nøyt ub ent \n\t\"hallo\" subst appell nøyt ub fl \n<word>i</word>\n\"<i>\"\n\t\"i\" prep \n<word>luken</word>\n\"<luken>\"\n\t\"luke\" subst appell mask be ent \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt>")
     out = StringIO.new
-    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(out),
+    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(file: out),
                                                input_file: in_file)
     assert(disamb)
     disamb.disambiguate
@@ -43,7 +55,7 @@ class DisambiguatorTest < Test::Unit::TestCase
     # "til sjøs" is combined by the multitagger
     in_file = StringIO.new("<word>Vi</word>\n\"<vi>\"\n\t\"vi\" pron fl pers hum nom 1 \n<word>drar</word>\n\"<drar>\"\n\t\"dra\" verb pres tr1 i1 tr11 pa1 a3 rl5 pa5 tr11/til a7 a9 \n<word>til sjøs</word>\n\"<til sjøs>\"\n\t\"til sjøs\" prep prep+subst @adv \n<word>.</word>\n\"<.>\"\n\t\"$.\" clb <<< <punkt> \n")
     out = StringIO.new
-    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(out),
+    disamb = TextlabOBTStat::Disambiguator.new(writer: TextlabOBTStat::VRTWriter.new(file: out),
                                                input_file: in_file)
     assert(disamb)
     disamb.disambiguate

@@ -1,4 +1,4 @@
-require_relative 'obt_stat'
+require_relative 'globals'
 
 module TextlabOBTStat
 
@@ -15,9 +15,9 @@ module TextlabOBTStat
     LATIN1_NOWAC_FREQ_FN = File.join(TextlabOBTStat.root_path,
                                      "models", "nowac07_z10k-lemma-frq-noprop.lst")
 
-    @@default_file = "data/trening-u-flert-d.train.cor"
-    @@version_1_file_header = "version 1"
-    @@lemma_data_sep = "^"
+    DEFAULT_FILE = "data/trening-u-flert-d.train.cor"
+    VERSION_1_FILE_HEADER = "version 1"
+    LEMMA_DATA_SEP = "^"
 
     attr_reader :model, :unknown_model
 
@@ -25,7 +25,7 @@ module TextlabOBTStat
       @lemma_backoff_disambiguation = :nowac # :prefix, :nowac or :nowac_full
       @unknown_model = {}
 
-      @format = opts[:format] || "utf-8"
+      @format = opts[:format] || 'utf-8'
       @model_fn = opts[:model_fn] || default_model_fn(@format)
       @model = create_lemma_model(@model_fn)
 
@@ -36,7 +36,7 @@ module TextlabOBTStat
 
     def default_model_fn(format)
       case format
-        when "utf-8"
+        when 'utf-8'
           UTF8_MODEL_FN
         when 'latin1'
           LATIN1_MODEL_FN
@@ -57,7 +57,7 @@ module TextlabOBTStat
     end
 
     def model_entry(word)
-      return @model[word]
+      @model[word]
     end
 
 
@@ -76,7 +76,7 @@ module TextlabOBTStat
         end
       end
 
-      return top_result[0]
+      top_result[0]
     end
 
     def prefix_similarity(w1,w2)
@@ -84,25 +84,17 @@ module TextlabOBTStat
 
       len.times { |i| return i - 1 if w1[i] != w2[i] }
 
-      return len
+      len
     end
 
     def disambiguate_lemma(word, lemma_list)
-      # $tracer.message "Disambiguating: " + word
-      # $tracer.message "From " + lemma_list.join(' ')
-
       word_lookup = @model[word]
-
-      # $tracer.message "Lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
 
       # filter incompatible lemmas
       # TODO handle punctuation with prefixed $
       word_lookup = word_lookup.find_all { |l| lemma_list.include? l.first } if not word_lookup.nil?
 
-      # $tracer.message "Filtered lookup: " + ((word_lookup.nil? or word_lookup.empty?) ? "NONE" : (word_lookup.collect { |l| l.first }.join(' ')))
-
       if word_lookup.nil? or word_lookup.empty?
-        # $tracer.message "Using backoff lemma model..."
         if @lemma_backoff_disambiguation == :nowac or @lemma_backoff_disambiguation == :nowac_full
           lemma_counts = lemma_list.collect { |lemma| [lemma, @unknown_model[lemma]] }
         elsif @lemma_backoff_disambiguation == :prefix
@@ -110,7 +102,6 @@ module TextlabOBTStat
         else
           raise RuntimeError
         end
-
 
         if lemma_counts.all? { |x| x[1].nil? }
           return lemma_list.first
@@ -129,11 +120,9 @@ module TextlabOBTStat
         end
       end
 
-      # $tracer.message "Found best lemma: " + best_lemma
-
       raise RuntimeError if best_lemma.nil?
 
-      return best_lemma
+      best_lemma
     end
 
     def lemma_counts(text)
@@ -165,7 +154,7 @@ module TextlabOBTStat
         end
       end
 
-      return [lemma_counts, no_correct]
+      [lemma_counts, no_correct]
     end
 
     # creates a lemma model based on the cor file
@@ -174,6 +163,7 @@ module TextlabOBTStat
     # file - a proprly formatted cor file. $stdin may be passed
     #        allowing the data to be read from it.
     # returns the populated @model variable
+    # @todo probably broken
     def create_lemma_model(file)
       filedata = nil
       @model = {}
@@ -204,7 +194,7 @@ module TextlabOBTStat
         end
       end
 
-      return @model
+      @model
     end
 
     # Writes the lemma model to a file. The first line in the file is a
@@ -214,18 +204,16 @@ module TextlabOBTStat
     # file - the file name to write the model to.
     # returns nil
     def write_lemma_model(file)
-      f = nil
-
       if file == $stdout
         f = $stdout
       else
         f = File.open(file, 'w')
       end
 
-      f.puts @@version_1_file_header
+      f.puts VERSION_1_FILE_HEADER
 
       @model.each do |k, v|
-        f.puts k + "\t" + v.collect{ |e| e.join(@@lemma_data_sep)}.join("\t")
+        f.puts k + "\t" + v.collect{ |e| e.join(LEMMA_DATA_SEP)}.join("\t")
       end
 
       if f != $stdout
@@ -240,7 +228,7 @@ module TextlabOBTStat
       @model = {}
       File.open(file, 'r') do |f|
         # first line should be a valid header
-        if f.readline.strip() != @@version_1_file_header
+        if f.readline.strip() != VERSION_1_FILE_HEADER
           raise RuntimeError
         end
 
@@ -250,7 +238,7 @@ module TextlabOBTStat
           lemmadata = tokens[1...tokens.count]
 
           lemmas = lemmadata.collect do |e|
-            e = e.split(@@lemma_data_sep)
+            e = e.split(LEMMA_DATA_SEP)
             raise RuntimeError if e.count != 2
             [e[0], e[1].to_f]
           end
@@ -263,7 +251,7 @@ module TextlabOBTStat
         end
       end
 
-      return @model
+      @model
     end
 
     def read_unknown_model
