@@ -1,23 +1,26 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
+
+# Script to split corpus into CV blocks
 
 # TODO interleaved vs block
 
 # corpus-split train-file held-file eval-file < corpus-file
 
 require 'getoptlong'
+require 'logger'
 
-require 'obno_stubs'
-require 'obno_text'
+require '../lib/obno_stubs'
+require '../lib/obno_text'
 
 $input_type = nil
 $split_type = :interleave
 
+$logger = Logger.new($stderr)
 # interleaved
 def do_normal_input(train_file, held_file, eval_file)
   empty_regex = Regexp.compile(/^$/)
 
   index = 0
-  fd = nil
 
   File.open(train_file, 'w') do |tf|
     File.open(held_file, 'w') do |hf|
@@ -31,10 +34,10 @@ def do_normal_input(train_file, held_file, eval_file)
             fd.puts ""
             
             case index
-            when 0..7:
+            when 0..7
               fd = tf
               index += 1
-            when 8:
+            when 8
               fd = hf
               index += 1
             else
@@ -103,16 +106,16 @@ def do_cor_input_interleave(train_file, held_file, eval_file)
   text = OBNOText.parse $stdin
 
   index = 0
-  fd = nil
+
   File.open(train_file, 'w') do |tf|
     File.open(held_file, 'w') do |hf|
       File.open(eval_file, 'w') do |ef|
         text.sentences.each do |s|
           case index
-            when 0..7:
+            when 0..7
               fd = tf
               index += 1
-            when 8:
+            when 8
               fd = hf
               index += 1
             else
@@ -136,16 +139,18 @@ if __FILE__ == $0
 
   opts.each do |opt, arg|
     case opt
-    when "--type":
+    when "--type"
         if arg == "cor"
           $input_type = :cor
         else
           raise RuntimeError
         end
-    when "--interleave":
+    when "--interleave"
         $split_type = :interleave
-    when "--block":
+    when "--block"
         $split_type = :block
+    else
+        logger.warn("Invalid option #{opt}")
     end
   end
 

@@ -1,13 +1,15 @@
-#!/opt/local/bin/ruby
+#!/usr/bin/env ruby
 
-require 'obno_stubs'
-require 'obno_text'
+# Converts OBT output format to vertical format used by Hunpos.
+
+require '../lib/obno_stubs'
+require '../lib/obno_text'
 
 def get_word_string(word)
   if word.capitalized?
-    return word.normalized_string.capitalize
+    word.normalized_string.capitalize
   else
-    return word.normalized_string
+    word.normalized_string
   end
 end
 

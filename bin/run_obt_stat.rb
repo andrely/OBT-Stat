@@ -3,9 +3,13 @@
 require "open3"
 require "getoptlong"
 require "rbconfig"
+require 'logger'
 
 require_relative '../lib/writers'
 require_relative '../lib/disambiguator'
+
+# TODO setup this properly
+$logger = Logger.new($stderr)
 
 module TextlabOBTStat
 
@@ -18,7 +22,7 @@ module TextlabOBTStat
   def TextlabOBTStat.run_disambiguator(params)
     params[:input_file] = File.open(params[:input_fn], 'r') if params[:input_fn]
     # instantiate writer with params based on command line arguments
-    params[:writer] = params[:writer].new(xml: params[:sent_seg] == :xml)
+    params[:writer] = params[:writer].new(:xml => params[:sent_seg] == :xml)
 
     disambiguator = TextlabOBTStat::Disambiguator.new(params)
 
@@ -31,9 +35,9 @@ end
 
 if __FILE__ == $0
   # default argument values
-  params = { writer: TextlabOBTStat::InputWriter,
-             sent_seg: :mtag,
-             format: "utf-8" }
+  params = { :writer => TextlabOBTStat::InputWriter,
+             :sent_seg => :mtag,
+             :format => "utf-8" }
 
   # parse options
   opts = GetoptLong.new(["--input", "-i", GetoptLong::REQUIRED_ARGUMENT],
@@ -94,6 +98,8 @@ if __FILE__ == $0
       when "--help"
         TextlabOBTStat.print_help
         exit
+      else
+        $logger.warn("Invalid option #{opt}")
     end
   end
 
