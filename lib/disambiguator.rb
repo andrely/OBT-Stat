@@ -187,7 +187,7 @@ module TextlabOBTStat
     #
     # @param [Word] input OBT input word.
     # @param [Array<String>] hunpos Corresponding token tag with Hunpos as token/tag pair.
-    # @param [LemmaModel] lemma_model Modek to use for lemma disambiguation
+    # @param [LemmaModel] lemma_model Model to use for lemma disambiguation
     # @return [Word] The Word instance passed as input argument with disambiguated tag marked as selected.
     def resolve(input, hunpos, lemma_model)
       if input.ambigious?
@@ -201,7 +201,7 @@ module TextlabOBTStat
         lemmas = candidates.collect { |t| t.lemma }
         lemma = lemma_model.disambiguate_lemma(input.string, lemmas)
 
-        tags = input.tags.find_all { |t| t.lemma.downcase == lemma.downcase }
+        tags = candidates.find_all { |t| t.lemma.downcase == lemma.downcase }
 
         # take the first tag with the correct lemma
         tag = tags.first
